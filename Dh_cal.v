@@ -78,7 +78,7 @@ module Dh_cal #(
             Dh_out <= 0;
         end else begin
             // Báo valid khi nhận đủ 8 giá trị (đếm từ 0 đến 7)
-            if ((dh_count == 3'd7)) begin
+            if ((dh_count == 3'd7)&& Dh_en) begin
                 Dh_result_valid <= 1'b1;
                 // Kết quả cuối cùng là giá trị tích lũy hiện tại CỘNG với giá trị SoP cuối cùng
                 Dh_out <= (dh_reg + {{ACC_WIDTH-N-1{SoP[N]}}, SoP});

@@ -37,7 +37,7 @@ module tb_x_calculate;
     reg signed [N-1:0] h_stim_r [0:ROWS-1][0:COLS-1];
     reg signed [N-1:0] h_stim_i [0:ROWS-1][0:COLS-1];
 	
-    wire signed [15:0]  xI1_out, xQ1_out, xI2_out, xQ2_out;
+    wire signed [N-1:0]  xI1_out, xQ1_out, xI2_out, xQ2_out;
     x_calculate #(.Q(Q), .N(N), .ACC_WIDTH(ACC_WIDTH)) dut (
         .clk(clk),
         .rst(rst),

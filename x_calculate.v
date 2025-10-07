@@ -6,8 +6,8 @@
  * lỗi tự gọi lại chính nó (recursive instantiation).
  */
 module x_calculate #(
-    parameter Q = 8,
-    parameter N = 16,
+    parameter Q = 16,
+    parameter N = 32,
     parameter ACC_WIDTH = 32
 )
 (
@@ -76,7 +76,7 @@ wire [1:0] k_counter;
 //----------------------------------------------------------------
 // Module tính Hq (giả định tên là "matrix_multiplier_inst")
 // Dữ liệu đầu vào H được đọc từ RAM nội bộ
-matrix_multiplier hq_calc_inst (
+matrix_multiplier  #(.N(N), .Q(Q)) hq_calc_inst(
     .clk(clk),
     .rst(rst),
     .start(start_hq_calc),
@@ -92,6 +92,21 @@ matrix_multiplier hq_calc_inst (
     .Hq_out_r(hq_r),
     .Hq_out_i(hq_i)
 );
+wire Dh_en;
+wire signed [N-1:0] dh_in_r,dh_in_i;
+wire signed [N-1:0] Dh_out;
+assign dh_in_r = (hq_valid)? hq_r : dh_in_r;
+assign dh_in_i = (hq_valid)? hq_i : dh_in_i;
+
+Dh_cal #(.N(N), .Q(Q)) dh_calc_inst(
+      .clk(clk),
+      .rst(rst),
+      .Dh_en(hq_valid), 
+      .in_real(dh_in_r),
+      .in_im(dh_in_i),
+      .Dh_out(Dh_out),
+      .Dh_result_valid(Dh_result_valid)
+); 
 
 //----------------------------------------------------------------
 // 4. FSM Logic
