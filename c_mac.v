@@ -18,7 +18,7 @@ module c_mac #(
     input signed [N-1:0] in_ar, in_ai,
     input signed [N-1:0] in_br, in_bi,
 
-    output reg signed [32-1:0] mac_r_out, mac_i_out,
+    output reg signed [N-1:0] mac_r_out, mac_i_out,
     output reg mac_result_valid // Báo hiệu kết quả tích lũy mac_r_out/mac_i_out là hợp lệ
 );
     wire mac_rs_valid;

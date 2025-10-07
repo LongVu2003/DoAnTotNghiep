@@ -25,8 +25,8 @@ module trace_calculator #(
 
     // Đầu ra
     output reg done_calc,
-    output reg signed [ACC_WIDTH-1:0] trace_result_r,
-    output reg signed [ACC_WIDTH-1:0] trace_result_i
+    output reg signed [N-1:0] trace_result_r,
+    output reg signed [N-1:0] trace_result_i
 );
 
 // --- 1. FSM, MAC và Counters ---
@@ -46,7 +46,7 @@ reg [1:0] k_counter; // Đếm 0-3 cho dot product
 // Tín hiệu điều khiển MAC
 reg mac_en, mac_clear;
 wire mac_result_valid;
-wire signed [ACC_WIDTH-1:0] mac_result_r, mac_result_i;
+wire signed [N-1:0] mac_result_r, mac_result_i;
 
 // Thanh ghi lưu kết quả trung gian P[0][0]
 reg signed [ACC_WIDTH-1:0] p00_reg_r, p00_reg_i;
