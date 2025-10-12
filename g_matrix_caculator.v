@@ -3,7 +3,7 @@
 * Chức năng: Tự động kích hoạt, nạp đủ ma trận Hq vào RAM,
 * sau đó xuất ra tuần tự 4 hàng của cả 4 ma trận G.
 */
-module g_matrix_calculator_final #(
+module g_matrix_calculator #(
     parameter N = 16
 )
 (

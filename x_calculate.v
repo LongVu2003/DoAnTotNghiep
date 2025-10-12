@@ -106,8 +106,100 @@ Dh_cal #(.N(N), .Q(Q)) dh_calc_inst(
       .in_im(dh_in_i),
       .Dh_out(Dh_out),
       .Dh_result_valid(Dh_result_valid)
-); 
+);
+wire div_ovr;
+wire [N-1:0]  inversDh;
+fxp_div_pipe invDh_inst (
+ .rstn(!rst),
+ .clk(clk),
+ .dividend(16'd1<<Q),
+ .divisor(Dh_out),
+ .out(inversDh),
+ .overflow(div_ovr)
+);
 
+wire g_row_valid;
+wire g_done;
+
+wire signed [N-1:0] Ga1_c0_r, Ga1_c0_i, Ga1_c1_r, Ga1_c1_i;
+wire signed [N-1:0] Ga2_c0_r, Ga2_c0_i, Ga2_c1_r, Ga2_c1_i;
+wire signed [N-1:0] Gb1_c0_r, Gb1_c0_i, Gb1_c1_r, Gb1_c1_i;
+wire signed [N-1:0] Gb2_c0_r, Gb2_c0_i, Gb2_c1_r, Gb2_c1_i;
+g_matrix_calculator g_matrix_inst(
+	.clk(clk),
+	.rst(rst),
+	.Hq_in_valid(hq_valid),
+	.Hq_in_r(dh_in_r),
+	.Hq_in_i(dh_in_i),
+	.G_row_valid(g_row_valid), // Xung báo hiệu MỘT HÀNG của 4 ma trận G đã sẵn sàng
+	.done(g_done),        // Xung báo hiệu đã xuất xong TẤT CẢ
+	.Ga1_c0_r(Ga1_c0_r), .Ga1_c0_i(Ga1_c0_i), .Ga1_c1_r(Ga1_c1_r), .Ga1_c1_i(Ga1_c1_i),
+	.Ga2_c0_r(Ga2_c0_r), .Ga2_c0_i(Ga2_c0_i), .Ga2_c1_r(Ga2_c1_r), .Ga2_c1_i(Ga2_c1_i),
+	.Gb1_c0_r(Gb1_c0_r), .Gb1_c0_i(Gb1_c0_i), .Gb1_c1_r(Gb1_c1_r), .Gb1_c1_i(Gb1_c1_i),
+	.Gb2_c0_r(Gb2_c0_r), .Gb2_c0_i(Gb2_c0_i), .Gb2_c1_r(Gb2_c1_r), .Gb2_c1_i(Gb2_c1_i)
+);
+reg signed [N-1:0] ga1ram_r [0:7];
+reg signed [N-1:0] ga1ram_i [0:7];
+
+wire signed [N-1:0] GA1_r,GA1_i;
+
+wire signed [N-1:0] y_rd_data_r,y_rd_data_i;
+
+wire signed [N-1:0] GA1_rd_data_r,GA1_rd_data_i;
+
+
+wire GA1_done_calc;
+reg [2:0] g_count;
+
+wire [2:0] g_rd_addr,y_rd_addr;
+
+always @(posedge clk, posedge rst) begin
+	if(rst) g_count <= 1'b0;
+	else if(g_row_valid) begin
+		ga1ram_r[g_count] <= Ga1_c0_r;
+		ga1ram_i[g_count] <= Ga1_c0_i;
+		ga1ram_r[g_count+1] <= Ga1_c1_r;
+		ga1ram_i[g_count+1] <= Ga1_c1_i;
+		g_count <= g_count + 1'b1;
+	end else g_count <= g_count;
+end
+trace_calculator #(
+  .N(N)
+) traceGa1 (
+  .clk(clk),
+  .rst(rst),
+  .start_calc(g_done),
+  .y_rd_addr(y_rd_addr),
+  .y_rd_data_r(y_rd_data_r),
+  .y_rd_data_i(y_rd_data_i),
+  .g_rd_addr(g_rd_addr),
+  .g_rd_data_r(GA1_rd_data_r),
+  .g_rd_data_i(GA1_rd_data_i),
+  .done_calc(GA1_done_calc),
+  .trace_result_r(GA1_r),
+  .trace_result_i(GA1_i)
+);
+assign GA1_rd_data_r = ga1ram_r[g_rd_addr];
+assign GA1_rd_data_i = ga1ram_i[g_rd_addr];
+
+assign y_rd_data_r = y_mem_real[y_rd_addr];
+assign y_rd_data_i = y_mem_imag[y_rd_addr];
+
+wire signed [N-1:0] Xi1;
+cmult #(
+    .Q(Q),
+    .N(N)
+) xI1_calc_inst (
+    .clk(clk),
+    .rst(rst),
+    .ar(GA1_r),
+    .ai(16'b0),
+    .br(inversDh),
+    .bi(16'b0),
+    .pr(Xi1),
+    .pi()
+);
+//----------------------------------------------------------------
 //----------------------------------------------------------------
 // 4. FSM Logic
 //----------------------------------------------------------------
