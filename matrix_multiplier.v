@@ -44,8 +44,8 @@ module matrix_multiplier #(
     wire signed [N-1:0] mac_result_r, mac_result_i;
     wire mac_result_valid;
     reg mac_en;
-    wire mac_clear;
-    assign mac_clear = mac_result_valid;
+   // wire mac_clear;
+   // assign mac_clear = mac_result_valid;
     
     //assign h_data_r = h_mem_real[i_counter][k_counter];
     //assign h_data_i = h_mem_imag[i_counter][k_counter];
@@ -308,7 +308,7 @@ module matrix_multiplier #(
     ) c_mac_inst (
         .clk(clk),
         .rst(rst),
-        .mac_clear(mac_clear),
+       // .mac_clear(mac_clear),
         .mac_en(mac_en),
         .in_ar(H_in_r),
         .in_ai(H_in_i),

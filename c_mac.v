@@ -13,7 +13,6 @@ module c_mac #(
 (
     input clk,
     input rst,
-    input mac_clear,
     input mac_en, // Tín hiệu báo hiệu dữ liệu (in_ar, in_ai, in_br, in_bi) là hợp lệ
     input signed [N-1:0] in_ar, in_ai,
     input signed [N-1:0] in_br, in_bi,
@@ -21,6 +20,7 @@ module c_mac #(
     output reg signed [N-1:0] mac_r_out, mac_i_out,
     output reg mac_result_valid // Báo hiệu kết quả tích lũy mac_r_out/mac_i_out là hợp lệ
 );
+    wire mac_clear = mac_result_valid;
     wire mac_rs_valid;
     //wire product_valid_out;
     localparam LATENCY = 6; // Độ trễ của module cmult.sv

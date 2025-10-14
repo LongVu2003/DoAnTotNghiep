@@ -30,10 +30,10 @@ module x_calculate #(
     
     // --- Đầu ra cuối cùng (chưa sử dụng) ---
     output reg q_done,
-    output reg signed [N-1:0] xI1_out,
-    output reg signed [N-1:0] xQ1_out,
-    output reg signed [N-1:0] xI2_out,
-    output reg signed [N-1:0] xQ2_out
+    output  signed [N-1:0] xI1_out,
+    output  signed [N-1:0] xQ1_out,
+    output  signed [N-1:0] xI2_out,
+    output  signed [N-1:0] xQ2_out
 );
 
 //----------------------------------------------------------------
@@ -55,8 +55,11 @@ reg start_hq_calc; // Điều khiển module tính toán
 reg signed [N-1:0] h_mem_real [0:3][0:3];
 reg signed [N-1:0] h_mem_imag [0:3][0:3];
 
-reg signed [N-1:0] y_mem_real [0:7];
-reg signed [N-1:0] y_mem_imag [0:7];
+reg signed [N-1:0] y_mem1_r [0:3];
+reg signed [N-1:0] y_mem1_i [0:3];
+
+reg signed [N-1:0] y_mem2_r [0:3];
+reg signed [N-1:0] y_mem2_i [0:3];
 
 // Bộ đếm để nạp dữ liệu vào RAM
 reg [1:0] load_row_cnt;
@@ -109,6 +112,33 @@ Dh_cal #(.N(N), .Q(Q)) dh_calc_inst(
 );
 wire div_ovr;
 wire [N-1:0]  inversDh;
+
+reg invDh_valid;
+reg invDh_count_ena;
+reg [4:0] inv_count;
+always @(posedge clk,posedge rst) begin
+	if(rst) begin
+		 invDh_count_ena <= 1'b0;
+	end
+	else if(inv_count == 7'd17)
+		invDh_count_ena <= 1'b0;
+	else if(Dh_result_valid == 1'b1)
+		invDh_count_ena <= 1'b1;
+end
+always @(posedge clk,posedge rst) begin
+	if(rst) begin
+		inv_count <= 1'd0;
+		invDh_valid <= 5'b0;
+	end
+	else if(inv_count == 5'd17) begin
+		inv_count <= 5'd0;
+		invDh_valid <= 1'd1;
+	end
+	else if(invDh_count_ena)
+		inv_count <= inv_count + 1'b1;
+	else invDh_valid <= 1'd0;
+end
+		
 fxp_div_pipe invDh_inst (
  .rstn(!rst),
  .clk(clk),
@@ -118,93 +148,182 @@ fxp_div_pipe invDh_inst (
  .overflow(div_ovr)
 );
 
-wire g_row_valid;
-wire g_done;
+wire g_valid;
 
 wire signed [N-1:0] Ga1_c0_r, Ga1_c0_i, Ga1_c1_r, Ga1_c1_i;
 wire signed [N-1:0] Ga2_c0_r, Ga2_c0_i, Ga2_c1_r, Ga2_c1_i;
 wire signed [N-1:0] Gb1_c0_r, Gb1_c0_i, Gb1_c1_r, Gb1_c1_i;
 wire signed [N-1:0] Gb2_c0_r, Gb2_c0_i, Gb2_c1_r, Gb2_c1_i;
+
 g_matrix_calculator g_matrix_inst(
 	.clk(clk),
 	.rst(rst),
 	.Hq_in_valid(hq_valid),
-	.Hq_in_r(dh_in_r),
-	.Hq_in_i(dh_in_i),
-	.G_row_valid(g_row_valid), // Xung báo hiệu MỘT HÀNG của 4 ma trận G đã sẵn sàng
-	.done(g_done),        // Xung báo hiệu đã xuất xong TẤT CẢ
+	.Hq_in_r(hq_r),
+	.Hq_in_i(hq_i),
+	.G_valid(g_valid),
 	.Ga1_c0_r(Ga1_c0_r), .Ga1_c0_i(Ga1_c0_i), .Ga1_c1_r(Ga1_c1_r), .Ga1_c1_i(Ga1_c1_i),
 	.Ga2_c0_r(Ga2_c0_r), .Ga2_c0_i(Ga2_c0_i), .Ga2_c1_r(Ga2_c1_r), .Ga2_c1_i(Ga2_c1_i),
 	.Gb1_c0_r(Gb1_c0_r), .Gb1_c0_i(Gb1_c0_i), .Gb1_c1_r(Gb1_c1_r), .Gb1_c1_i(Gb1_c1_i),
 	.Gb2_c0_r(Gb2_c0_r), .Gb2_c0_i(Gb2_c0_i), .Gb2_c1_r(Gb2_c1_r), .Gb2_c1_i(Gb2_c1_i)
 );
-reg signed [N-1:0] ga1ram_r [0:7];
-reg signed [N-1:0] ga1ram_i [0:7];
-
-wire signed [N-1:0] GA1_r,GA1_i;
-
-wire signed [N-1:0] y_rd_data_r,y_rd_data_i;
-
-wire signed [N-1:0] GA1_rd_data_r,GA1_rd_data_i;
 
 
-wire GA1_done_calc;
-reg [2:0] g_count;
 
-wire [2:0] g_rd_addr,y_rd_addr;
 
-always @(posedge clk, posedge rst) begin
-	if(rst) g_count <= 1'b0;
-	else if(g_row_valid) begin
-		ga1ram_r[g_count] <= Ga1_c0_r;
-		ga1ram_i[g_count] <= Ga1_c0_i;
-		ga1ram_r[g_count+1] <= Ga1_c1_r;
-		ga1ram_i[g_count+1] <= Ga1_c1_i;
-		g_count <= g_count + 1'b1;
-	end else g_count <= g_count;
+wire signed [N-1:0] ga1_r,ga1_i,ga2_r,ga2_i,gb1_r,gb1_i,gb2_r,gb2_i;
+wire ga1_done,ga2_done,gb1_done,gb2_done;
+wire signed [N-1:0] y_r0_r, y_r0_i, y_r1_r, y_r1_i;
+
+reg [1:0] cnt_y;
+always @(posedge clk) begin
+	if(rst)
+		cnt_y <= 0;
+	else if (g_valid)
+		cnt_y <= cnt_y + 1;
 end
+assign y_r0_r = (g_valid)? y_mem1_r[cnt_y] : 0;
+assign y_r0_i = (g_valid)? y_mem1_i[cnt_y] : 0;
+assign y_r1_r = (g_valid)? y_mem2_r[cnt_y] : 0;
+assign y_r1_i = (g_valid)? y_mem2_i[cnt_y] : 0;
+
+
 trace_calculator #(
   .N(N)
 ) traceGa1 (
   .clk(clk),
   .rst(rst),
-  .start_calc(g_done),
-  .y_rd_addr(y_rd_addr),
-  .y_rd_data_r(y_rd_data_r),
-  .y_rd_data_i(y_rd_data_i),
-  .g_rd_addr(g_rd_addr),
-  .g_rd_data_r(GA1_rd_data_r),
-  .g_rd_data_i(GA1_rd_data_i),
-  .done_calc(GA1_done_calc),
-  .trace_result_r(GA1_r),
-  .trace_result_i(GA1_i)
+  .cal_en(g_valid),
+  .y_r0_r(y_r0_r),
+  .y_r0_i(y_r0_i),
+  .y_r1_r(y_r1_r),
+  .y_r1_i(y_r1_i),
+  .g_c0_r(Ga1_c0_r),
+  .g_c0_i(Ga1_c0_i),
+  .g_c1_r(Ga1_c1_r),
+  .g_c1_i(Ga1_c1_i),
+  .done_calc(ga1_done),
+  .trace_result_r(ga1_r),
+  .trace_result_i(ga1_i)
 );
-assign GA1_rd_data_r = ga1ram_r[g_rd_addr];
-assign GA1_rd_data_i = ga1ram_i[g_rd_addr];
+trace_calculator #(
+  .N(N)
+) traceGa2 (
+  .clk(clk),
+  .rst(rst),
+  .cal_en(g_valid),
+  .y_r0_r(y_r0_r),
+  .y_r0_i(y_r0_i),
+  .y_r1_r(y_r1_r),
+  .y_r1_i(y_r1_i),
+  .g_c0_r(Ga2_c0_r),
+  .g_c0_i(Ga2_c0_i),
+  .g_c1_r(Ga2_c1_r),
+  .g_c1_i(Ga2_c1_i),
+  .done_calc(ga2_done),
+  .trace_result_r(ga2_r),
+  .trace_result_i(ga2_i)
+);
 
-assign y_rd_data_r = y_mem_real[y_rd_addr];
-assign y_rd_data_i = y_mem_imag[y_rd_addr];
+trace_calculator #(
+  .N(N)
+) traceGb1 (
+  .clk(clk),
+  .rst(rst),
+  .cal_en(g_valid),
+  .y_r0_r(y_r0_r),
+  .y_r0_i(y_r0_i),
+  .y_r1_r(y_r1_r),
+  .y_r1_i(y_r1_i),
+  .g_c0_r(Gb1_c0_r),
+  .g_c0_i(Gb1_c0_i),
+  .g_c1_r(Gb1_c1_r),
+  .g_c1_i(Gb1_c1_i),
+  .done_calc(gb1_done),
+  .trace_result_r(gb1_r),
+  .trace_result_i(gb1_i)
+);
 
-wire signed [N-1:0] Xi1;
-cmult #(
-    .Q(Q),
-    .N(N)
-) xI1_calc_inst (
+trace_calculator #(
+  .N(N)
+) traceGb2 (
+  .clk(clk),
+  .rst(rst),
+  .cal_en(g_valid),
+  .y_r0_r(y_r0_r),
+  .y_r0_i(y_r0_i),
+  .y_r1_r(y_r1_r),
+  .y_r1_i(y_r1_i),
+  .g_c0_r(Gb2_c0_r),
+  .g_c0_i(Gb2_c0_i),
+  .g_c1_r(Gb2_c1_r),
+  .g_c1_i(Gb2_c1_i),
+  .done_calc(gb2_done),
+  .trace_result_r(gb2_r),
+  .trace_result_i(gb2_i)
+);
+
+wire signed [N-1:0] ga1_r_delay, ga2_r_delay,gb1_i_delay,gb2_i_delay;
+delay_module delay_ga1(
     .clk(clk),
     .rst(rst),
-    .ar(GA1_r),
-    .ai(16'b0),
-    .br(inversDh),
-    .bi(16'b0),
-    .pr(Xi1),
-    .pi()
+    .in(ga1_r),
+    .number(5'd6), 
+    .out(ga1_r_delay)
 );
-//----------------------------------------------------------------
-//----------------------------------------------------------------
-// 4. FSM Logic
-//----------------------------------------------------------------
+delay_module delay_ga2(
+    .clk(clk),
+    .rst(rst),
+    .in(ga2_r),
+    .number(5'd6), 
+    .out(ga2_r_delay)
+);
+delay_module delay_gb1(
+    .clk(clk),
+    .rst(rst),
+    .in(gb1_i),
+    .number(5'd6), 
+    .out(gb1_i_delay)
+);
+delay_module delay_gb2(
+    .clk(clk),
+    .rst(rst),
+    .in(gb2_i),
+    .number(5'd6), 
+    .out(gb2_i_delay)
+);
+wire ovr_xi1,ovr_xi2,ovr_xq1,ovr_xq2;
+wire signed [N-1:0] xI1_out_tmp,xI2_out_tmp,xQ1_out_tmp,xQ2_out_tmp;
+qmult #(.Q(Q), .N(N)) xi1_cal_inst (
+    .i_multiplicand(ga1_r_delay),
+    .i_multiplier(inversDh),
+    .o_result(xI1_out_tmp),
+    .ovr(ovr_xi1)
+);
+qmult #(.Q(Q), .N(N)) xi2_cal_inst (
+    .i_multiplicand(ga2_r_delay),
+    .i_multiplier(inversDh),
+    .o_result(xI2_out_tmp),
+    .ovr(ovr_xi2)
+);
+qmult #(.Q(Q), .N(N)) xq1_cal_inst (
+    .i_multiplicand(gb1_i_delay),
+    .i_multiplier(inversDh),
+    .o_result(xQ1_out_tmp),
+    .ovr(ovr_xq1)
+);
+qmult #(.Q(Q), .N(N)) xq2_cal_inst (
+    .i_multiplicand(gb2_i_delay),
+    .i_multiplier(inversDh),
+    .o_result(xQ2_out_tmp),
+    .ovr(ovr_xq2)
+);
 
-// --- Logic tổ hợp (Combinational): Xác định trạng thái kế tiếp ---
+assign xI1_out = xI1_out_tmp;
+assign xI2_out = xI2_out_tmp;
+assign xQ1_out = -xQ1_out_tmp;
+assign xQ2_out = -xQ2_out_tmp;
+
 wire load_H_done = (load_row_cnt == 2'b11 && load_col_cnt == 2'b11);
 wire load_Y_done = y_count == 3'b111;
 always @(*) begin
@@ -217,8 +336,6 @@ always @(*) begin
 		$display("IDLE");
         end
         S_LOAD: begin
-            // Khi H_in_valid và bộ đếm đã ở vị trí cuối cùng (3,3),
-            // việc ghi sẽ hoàn tất ở cạnh clock tiếp theo, nên ta chuyển trạng thái.
             if (H_in_valid && load_H_done) begin
                 next_state = S_CALC;
             end
@@ -234,7 +351,6 @@ always @(*) begin
     endcase
 end
 
-// --- Logic tuần tự (Sequential): Cập nhật trạng thái và các thanh ghi ---
 always @(posedge clk or rst) begin
     if (rst) begin
         state <= S_IDLE;
@@ -244,10 +360,6 @@ always @(posedge clk or rst) begin
            start_hq_calc = 1'b1; // Kích hoạt module tính toán
         // Reset các đầu ra
         q_done <= 1'b0;
-        xI1_out <= 0;
-        xQ1_out <= 0;
-        xI2_out <= 0;
-        xQ2_out <= 0;
     end else begin
         state <= next_state;
 
@@ -280,10 +392,15 @@ always @(posedge clk or rst) begin
                 end
             end
 	    if(Y_in_valid == 1) begin
-		y_mem_real[y_count] <= Y_in_r;
-		y_mem_imag[y_count] <= Y_in_i;
+		y_count <= y_count + 1;
+		if(y_count < 4) begin
+			y_mem1_r[y_count] <= Y_in_r;
+			y_mem1_i[y_count] <= -Y_in_i;
+		end else if(y_count > 3 && y_count < 8) begin
+			y_mem2_r[y_count-3'd4] <= Y_in_r;
+			y_mem2_i[y_count-3'd4] <= -Y_in_i;
+		end
 		if(y_count == 3'b111) y_count = 3'b000;
-		else y_count <= y_count + 1;
 	    end	
         end
     end
