@@ -13,14 +13,15 @@ module c_mac #(
 (
     input clk,
     input rst,
-    input mac_clear,
     input mac_en, // Tín hiệu báo hiệu dữ liệu (in_ar, in_ai, in_br, in_bi) là hợp lệ
     input signed [N-1:0] in_ar, in_ai,
     input signed [N-1:0] in_br, in_bi,
 
     output reg signed [N-1:0] mac_r_out, mac_i_out,
-    output mac_result_valid // Báo hiệu kết quả tích lũy mac_r_out/mac_i_out là hợp lệ
+    output reg mac_result_valid // Báo hiệu kết quả tích lũy mac_r_out/mac_i_out là hợp lệ
 );
+    wire mac_clear = mac_result_valid;
+    wire mac_rs_valid;
     //wire product_valid_out;
     localparam LATENCY = 6; // Độ trễ của module cmult.sv
     // Dây nối để nhận kết quả từ khối nhân
@@ -52,6 +53,7 @@ module c_mac #(
         if (rst) begin
             data_valid_pipe <= {LATENCY{1'b0}}; // Reset tất cả về 0
         end else begin
+	    mac_result_valid <= mac_rs_valid;
             // Trễ tín hiệu valid (5-stage pipeline)
             data_valid_pipe <= {data_valid_pipe[LATENCY-2:0], mac_en};
         end
@@ -99,12 +101,12 @@ module c_mac #(
 	if(rst) begin
 		mac_r_out <= 0;
 		mac_i_out <= 0;
-	end else if(mac_result_valid) begin
+	end else if(mac_rs_valid) begin
     		mac_r_out <=  mac_r_reg + {{ACC_WIDTH-N{product_r[N-1]}}, product_r}; 
 		mac_i_out <=  mac_i_reg + {{ACC_WIDTH-N{product_i[N-1]}}, product_i};
 	end
     end
-  //  assign mac_i_out = (mac_result_valid)? mac_i_reg[N-1:0]: 0;
+  //  assign mac_i_out = (mac_rs_valid)? mac_i_reg[N-1:0]: 0;
    // assign product_valid_out = product_valid;
-    assign mac_result_valid = (product_valid && mac_counter == 3)? 1:0;
+    assign mac_rs_valid = (product_valid && mac_counter == 3)? 1:0;
 endmodule
