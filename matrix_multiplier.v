@@ -184,7 +184,7 @@ module matrix_multiplier #(
             {4'd15, 2'd1, 1'b1}: {s_data_r, s_data_i} = {P_HALF, ZERO};
             {4'd15, 2'd2, 1'b0}: {s_data_r, s_data_i} = {ZERO, N_HALF};
             {4'd15, 2'd2, 1'b1}: {s_data_r, s_data_i} = {ZERO, N_HALF};
-            {4'd15, 2'd3, 1'b0}: {s_data_r, s_data_i} = {ZERO, P_HALF};
+            {4'd15, 2'd3, 1'b0}: {s_data_r, s_data_i} = {ZERO, N_HALF};
             {4'd15, 2'd3, 1'b1}: {s_data_r, s_data_i} = {ZERO, N_HALF};
             default: {s_data_r, s_data_i} = {16'b0, 16'b0};
         endcase
