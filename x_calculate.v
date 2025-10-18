@@ -324,6 +324,35 @@ assign xI2_out = xI2_out_tmp;
 assign xQ1_out = -xQ1_out_tmp;
 assign xQ2_out = -xQ2_out_tmp;
 
+wire signed [N-1:0] dI1, dI2,dQ1,dQ2;
+wire signed [N-1:0] Rq;
+wire signed [2:0] m_dI1, m_dI2, m_dQ1, m_dQ2;
+
+MinFinder #(.N(N),.Q(Q)) dmin_inst(
+	.xI1(xI1_out), .xQ1(xQ1_out), .xI2(xI2_out), .xQ2(xQ2_out),
+	.min_dI1(dI1), .min_dQ1(dQ1), .min_dI2(dI2), .min_dQ2(dQ2),
+	.Rq(Rq),
+	.min_idx_dI1(m_dI1), .min_idx_dQ1(m_dQ1), .min_idx_dI2(m_dI2), .min_idx_dQ2(m_dQ2)
+);
+wire signed [N-1:0] Dh_delay;
+
+delay_module delay_dh(
+    .clk(clk),
+    .rst(rst),
+    .in(Dh_out),
+    .number(5'd17), 
+    .out(Dh_delay)
+);
+wire signed [N-1:0] dq_out;
+
+dq_cal #(.N(N),.Q(Q)) dq_calculate (
+	.clk(clk),
+	.rst(rst),
+	.dI1(dI1),.dI2(dI2),.dQ1(dQ1),.dQ2(dQ2),
+	.Rq(Rq),
+	.Dh(Dh_delay),
+	.dq_out(dq_out)
+);  
 wire load_H_done = (load_row_cnt == 2'b11 && load_col_cnt == 2'b11);
 wire load_Y_done = y_count == 3'b111;
 always @(*) begin
