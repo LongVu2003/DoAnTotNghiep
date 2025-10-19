@@ -6,7 +6,7 @@ module MinSelector #(
     output signed [N-1:0] min_dist,
     output  [2:0] min_idx
 );
-wire [15:0] tmp0,tmp1;
+wire [N-1:0] tmp0,tmp1;
 wire [2:0] tmpindex0, tmpindex1;
 
 comparator #(N,Q) c0(

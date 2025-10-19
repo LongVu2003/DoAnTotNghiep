@@ -1,3 +1,4 @@
+/*
 module qmult #(
 	//Parameterized values
 	parameter Q = 16,
@@ -36,5 +37,38 @@ module qmult #(
 		
 		ovr = |r_result[2*N-2:N-1+Q];// Neu N/2 bit dau >0 thi phep toan tran
 	end
+
+endmodule
+*/
+
+module qmult #(
+    // Parameterized values
+    parameter Q = 22, // Số bit phần thập phân
+    parameter N = 32  // Tổng số bit
+) (
+    input  signed [N-1:0] i_multiplicand,
+    input  signed [N-1:0] i_multiplier,
+    output signed [N-1:0] o_result,
+    output            ovr
+);
+
+    //  1. Sử dụng wire 2N bit để chứa kết quả nhân trung gian.
+    // Phép nhân hai số N-bit có dấu sẽ tạo ra kết quả 2N-bit.
+    wire signed [2*N-1:0] product_64bit;
+
+    //  2. Thực hiện phép nhân có dấu trực tiếp. Đơn giản và hiệu quả.
+    assign product_64bit = i_multiplicand * i_multiplier;
+
+    //  3. Trích xuất kết quả N-bit từ kết quả 2N-bit.
+    // Công thức: product_64bit[N+Q-1 : Q]
+    // Với N=32, Q=22 => product_64bit[53:22]
+    // Đây là bước quan trọng nhất để sửa lỗi giá trị sai.
+    assign o_result = product_64bit[53 : 22];
+
+    //  4. Logic kiểm tra tràn số.
+    // Tràn số xảy ra nếu các bit "thừa" không phải là phần mở rộng dấu
+    // của kết quả. Cách kiểm tra đơn giản là so sánh bit dấu của kết quả
+    // (bit cao nhất) với bit dấu của toàn bộ tích 64-bit.
+    assign ovr = (product_64bit[2*N-1] != product_64bit[N+Q-1]);
 
 endmodule

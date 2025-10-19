@@ -1,6 +1,6 @@
 module delay_module #(
     parameter N = 16,          // Độ rộng dữ liệu
-    parameter MAX_DELAY = 32  // Độ trễ tối đa có thể lưu được
+    parameter MAX_DELAY = 40  // Độ trễ tối đa có thể lưu được
 )(
     input  wire              clk,
     input  wire              rst,

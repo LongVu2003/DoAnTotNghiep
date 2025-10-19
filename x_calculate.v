@@ -6,7 +6,7 @@
  * lỗi tự gọi lại chính nó (recursive instantiation).
  */
 module x_calculate #(
-    parameter Q = 16,
+    parameter Q = 22,
     parameter N = 32,
     parameter ACC_WIDTH = 32
 )
@@ -115,23 +115,23 @@ wire [N-1:0]  inversDh;
 
 reg invDh_valid;
 reg invDh_count_ena;
-reg [4:0] inv_count;
+reg [6:0] inv_count;
 always @(posedge clk,posedge rst) begin
 	if(rst) begin
 		 invDh_count_ena <= 1'b0;
 	end
-	else if(inv_count == 7'd17)
+	else if(inv_count == (N+1))
 		invDh_count_ena <= 1'b0;
 	else if(Dh_result_valid == 1'b1)
 		invDh_count_ena <= 1'b1;
 end
 always @(posedge clk,posedge rst) begin
 	if(rst) begin
-		inv_count <= 1'd0;
-		invDh_valid <= 5'b0;
+		inv_count <= 7'd0;
+		invDh_valid <= 1'd0;
 	end
-	else if(inv_count == 5'd17) begin
-		inv_count <= 5'd0;
+	else if(inv_count == (N+1)) begin
+		inv_count <= 7'd0;
 		invDh_valid <= 1'd1;
 	end
 	else if(invDh_count_ena)
@@ -139,10 +139,18 @@ always @(posedge clk,posedge rst) begin
 	else invDh_valid <= 1'd0;
 end
 		
-fxp_div_pipe invDh_inst (
+fxp_div_pipe #( 
+    .WIIA  (N-Q),
+    .WIFA  (Q),
+    .WIIB  (N-Q),
+    .WIFB  (Q),
+    .WOI   (N-Q),
+    .WOF   (Q),
+    .ROUND (0)
+) invDh_inst(
  .rstn(!rst),
  .clk(clk),
- .dividend(16'd1<<Q),
+ .dividend(32'd1<<Q),
  .divisor(Dh_out),
  .out(inversDh),
  .overflow(div_ovr)
@@ -155,7 +163,7 @@ wire signed [N-1:0] Ga2_c0_r, Ga2_c0_i, Ga2_c1_r, Ga2_c1_i;
 wire signed [N-1:0] Gb1_c0_r, Gb1_c0_i, Gb1_c1_r, Gb1_c1_i;
 wire signed [N-1:0] Gb2_c0_r, Gb2_c0_i, Gb2_c1_r, Gb2_c1_i;
 
-g_matrix_calculator g_matrix_inst(
+g_matrix_calculator #(.N(N)) g_matrix_inst(
 	.clk(clk),
 	.rst(rst),
 	.Hq_in_valid(hq_valid),
@@ -264,32 +272,32 @@ trace_calculator #(
 );
 
 wire signed [N-1:0] ga1_r_delay, ga2_r_delay,gb1_i_delay,gb2_i_delay;
-delay_module delay_ga1(
+delay_module #(.N(N)) delay_ga1(
     .clk(clk),
     .rst(rst),
     .in(ga1_r),
-    .number(5'd6), 
+    .number(6'd22), 
     .out(ga1_r_delay)
 );
-delay_module delay_ga2(
+delay_module #(.N(N)) delay_ga2(
     .clk(clk),
     .rst(rst),
     .in(ga2_r),
-    .number(5'd6), 
+    .number(6'd22), 
     .out(ga2_r_delay)
 );
-delay_module delay_gb1(
+delay_module #(.N(N)) delay_gb1(
     .clk(clk),
     .rst(rst),
     .in(gb1_i),
-    .number(5'd6), 
+    .number(6'd22), 
     .out(gb1_i_delay)
 );
-delay_module delay_gb2(
+delay_module #(.N(N)) delay_gb2(
     .clk(clk),
     .rst(rst),
     .in(gb2_i),
-    .number(5'd6), 
+    .number(6'd22), 
     .out(gb2_i_delay)
 );
 wire ovr_xi1,ovr_xi2,ovr_xq1,ovr_xq2;
@@ -336,15 +344,22 @@ MinFinder #(.N(N),.Q(Q)) dmin_inst(
 );
 wire signed [N-1:0] Dh_delay;
 
-delay_module delay_dh(
+delay_module #(.N(N)) delay_dh(
     .clk(clk),
     .rst(rst),
     .in(Dh_out),
-    .number(5'd17), 
+    .number(6'd33), 
     .out(Dh_delay)
 );
 wire signed [N-1:0] dq_out;
-
+wire dq_valid;
+delay_module #(.N(N)) delay_valid(
+    .clk(clk),
+    .rst(rst),
+    .in(invDh_valid),
+    .number(6'd3), 
+    .out(dq_valid)
+);
 dq_cal #(.N(N),.Q(Q)) dq_calculate (
 	.clk(clk),
 	.rst(rst),
@@ -352,7 +367,62 @@ dq_cal #(.N(N),.Q(Q)) dq_calculate (
 	.Rq(Rq),
 	.Dh(Dh_delay),
 	.dq_out(dq_out)
-);  
+);
+wire signed [N-1:0] dq_min;
+wire busy, min_valid;
+
+wire  [2:0] min_dq_m_dI1;
+wire  [2:0] min_dq_m_dI2;
+wire  [2:0] min_dq_m_dQ1;
+wire  [2:0] min_dq_m_dQ2;
+
+wire [4:0] q_min;
+
+find_min #(
+    .N(32),
+    .NUM_VALUES(16)
+)
+find_min_inst (
+    .clk(clk),
+    .rst_n(!rst),
+    .dq_out(dq_out),
+    .in_valid(dq_valid),
+    .m_dI1(m_dI1),
+    .m_dI2(m_dI2),
+    .m_dQ1(m_dQ1),
+    .m_dQ2(m_dQ2),
+    .min_value(dq_min),
+    .min_valid(min_valid),
+    .busy(busy),
+    .min_m_dI1(min_dq_m_dI1),
+    .min_m_dI2(min_dq_m_dI2),
+    .min_m_dQ1(min_dq_m_dQ1),
+    .min_m_dQ2(min_dq_m_dQ2),
+    .q_min(q_min)
+);
+
+
+wire [7:0]         b1_out;
+wire [3:0]         b2_out;
+wire               final_out_valid;
+
+output_signal #(
+    .N(32)
+)
+output_signal_inst (
+    .clk(clk),
+    .rst_n(~rst),
+    .in_valid(min_valid),
+    .m_Imin_1(min_dq_m_dI1),
+    .m_Qmin_1(min_dq_m_dQ1),
+    .m_Imin_2(min_dq_m_dI2),
+    .m_Qmin_2(min_dq_m_dQ2),
+    .q_min(q_min),
+    .b1(b1_out),
+    .b2(b2_out),
+    .out_valid(final_out_valid)
+);
+
 wire load_H_done = (load_row_cnt == 2'b11 && load_col_cnt == 2'b11);
 wire load_Y_done = y_count == 3'b111;
 always @(*) begin

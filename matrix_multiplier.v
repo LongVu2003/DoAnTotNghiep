@@ -53,9 +53,9 @@ module matrix_multiplier #(
    // assign Hq_out_i = mac_result_i;
  
     always @(*) begin : sq_block
-        localparam P_HALF = 16'sd128;
-        localparam N_HALF = -16'sd128;
-        localparam ZERO   = 16'sd0;
+        localparam P_HALF = 32'h00200000;
+        localparam N_HALF = 32'hffe00000;
+        localparam ZERO   = 32'h00000000;
         
         case ({q_counter_reg, k_counter, j_counter})
             {4'd0, 2'd0, 1'b0}: {s_data_r, s_data_i} = {P_HALF, ZERO};

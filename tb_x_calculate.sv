@@ -3,8 +3,8 @@
 
 module tb_x_calculate;
 
-    parameter Q = 8;
-    parameter N = 16;
+    parameter Q = 22 ;
+    parameter N = 32;
     parameter ACC_WIDTH = 32;
     parameter ROWS = 4;
     parameter COLS = 4;
