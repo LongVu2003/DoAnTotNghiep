@@ -1,11 +1,10 @@
-// Đổi tên file thành .v, ví dụ: tb_matrix_multiplier.v
 `timescale 1ns/1ps
 
-module tb_x_calculate;
+module tb_top;
 
     parameter Q = 22 ;
     parameter N = 32;
-    parameter ACC_WIDTH = 32;
+
     parameter ROWS = 4;
     parameter COLS = 4;
     parameter CLK_PERIOD = 10;
@@ -15,8 +14,7 @@ module tb_x_calculate;
     
     parameter Y_REAL_FILE = "Y_real_gold_Q8_8.hex";
     parameter Y_IMAG_FILE = "Y_imag_gold_Q8_8.hex";
- 
-    parameter MATRIX_ELEMENTS = 8;
+
     reg clk;
     reg rst;
     reg start;
@@ -25,34 +23,38 @@ module tb_x_calculate;
 
     reg signed [N-1:0] H_in_r,Y_in_r;
     reg signed [N-1:0] H_in_i,Y_in_i;
-    reg [3:0] q_index;
 
-    
-    wire done;
-    wire Hq_out_valid;
-    wire signed [N-1:0] Hq_out_r;
-    wire signed [N-1:0] Hq_out_i;
+
+    wire signed [N-1:0] s_I_1;   // Real part of symbol 1
+    wire signed [N-1:0] s_Q_1;   // Imaginary part of symbol 1
+    wire signed [N-1:0] s_I_2;   // Real part of symbol 2
+    wire signed [N-1:0] s_Q_2;   // Imaginary part of symbol 2
+    wire [4:0]        Smin_index; // Index q_min representing the matrix S_qmin
+    wire              output_valid;
+    wire signed [11:0] signal_out_12bit;
 
     reg signed [N-1:0] h_stim_r [0:ROWS-1][0:COLS-1];
     reg signed [N-1:0] h_stim_i [0:ROWS-1][0:COLS-1];
 	
-    wire signed [N-1:0]  xI1_out, xQ1_out, xI2_out, xQ2_out;
-    x_calculate #(.Q(Q), .N(N), .ACC_WIDTH(ACC_WIDTH)) dut (
+  
+    soml_decoder_top #(.Q(Q), .N(N)) dut (
         .clk(clk),
         .rst(rst),
-        .start_new_q(start),
-        .q_index(q_index),
+        .start(start),
+
         .H_in_valid(H_in_valid),
         .H_in_r(H_in_r),
         .H_in_i(H_in_i),
-	.Y_in_valid(Y_in_valid),
-	.Y_in_r(Y_in_r),
-	.Y_in_i(Y_in_i),
-        .q_done(done),
-        .xI1_out(xI1_out), 
-	.xQ1_out(xQ1_out), 
-	.xI2_out(xI2_out), 
-	.xQ2_out(xQ2_out)
+	    .Y_in_valid(Y_in_valid),
+	    .Y_in_r(Y_in_r),
+	    .Y_in_i(Y_in_i),
+        .output_valid(output_valid),
+        .s_I_1(s_I_1), 
+        .s_Q_1(s_Q_1),
+        .s_I_2(s_I_2),
+        .s_Q_2(s_Q_2),
+        .Smin_index(Smin_index),
+        .signal_out_12bit(signal_out_12bit)
     );
 
     always #(CLK_PERIOD/2) clk = ~clk;
@@ -66,29 +68,27 @@ initial begin
         start = 1;
 	@(posedge clk);
 	start = 0;
-        read_h_matrix_from_file();
-       	fork
+    read_h_matrix_from_file();
+    fork
 		drive_h_matrix();
 		read_and_drive_y_matrix_from_file();
 	join
-	
-	wait(dut.all_16_hq_done);
-	#10000;	
-        $finish;
-
-    
+	wait(output_valid == 1);
+    #(CLK_PERIOD);
+    output_print();
+	#1000;	
+    $finish;  
 end
+
 initial begin
     #500000; // 5000 ns, hoặc 500 chu kỳ
     $display("TIMEOUT at %t", $time);
     $finish;
 end
-
-
     
 task initialize_signals;
     begin
-	clk = 0;
+	    clk = 0;
         start = 0;
         H_in_valid = 0;
         H_in_r = 0;
@@ -96,7 +96,6 @@ task initialize_signals;
         Y_in_valid = 0;
         Y_in_r = 0;
         Y_in_i = 0;
-        q_index = 0;
     end
     
 endtask
@@ -185,5 +184,26 @@ task drive_h_matrix;
 	$display("LOAD H MATRIX DONE");
     end
 endtask
-    
+
+task output_print;
+    real r_s_I_1, r_s_Q_1, r_s_I_2, r_s_Q_2;
+    begin
+        // Chuyển đổi từ fixed-point sang real
+        r_s_I_1 = $itor(s_I_1) / (1 << Q);
+        r_s_Q_1 = $itor(s_Q_1) / (1 << Q);
+        r_s_I_2 = $itor(s_I_2) / (1 << Q);
+        r_s_Q_2 = $itor(s_Q_2) / (1 << Q);
+
+        $display("======================");
+        $display("=== Output Results ===");
+        $display("======================");
+        $display("Symbol QAM 1 : %+.4f %+.4fj", r_s_I_1, r_s_Q_1);
+        $display("Symbol QAM 2 : %+.4f %+.4fj", r_s_I_2, r_s_Q_2);
+        $display("Index matrix S_qmin : %0d", Smin_index);
+        $display("Output signal 12 bit : %12b", signal_out_12bit);
+        $display("======================");
+    end
+endtask
+
+
 endmodule

@@ -19,7 +19,6 @@ module trace_calculator #(
     input signed [N-1:0] g_c0_r,g_c0_i,
     input signed [N-1:0] g_c1_r,g_c1_i,
 
-    output reg done_calc,
     output signed [N-1:0] trace_result_r,
     output signed [N-1:0] trace_result_i
 );

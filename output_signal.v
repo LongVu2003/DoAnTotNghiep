@@ -3,7 +3,6 @@
  * @details Implements the Bv and Bs mapping functions based on the provided formulas.
  * The outputs are registered and valid for one clock cycle after the input is valid.
  * Written in pure Verilog-2001 for maximum compatibility.
- * @author Gemini Verilog Expert
  */
 module output_signal #(
     parameter N = 32

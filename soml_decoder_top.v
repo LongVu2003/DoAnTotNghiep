@@ -1,41 +1,40 @@
-/*
- * Module: calculation_controller
- * Chức năng: Module điều khiển chính, quản lý việc nạp ma trận H
- * và khởi động quá trình tính toán Hq.
- * Ghi chú: Tên module đã được đổi từ "matrix_multiplier" để tránh
- * lỗi tự gọi lại chính nó (recursive instantiation).
- */
-module x_calculate #(
+module soml_decoder_top #(
     parameter Q = 22,
-    parameter N = 32,
-    parameter ACC_WIDTH = 32
+    parameter N = 32
 )
 (
     // --- Interface ---
     input clk,
     input rst,
-    input start_new_q,          // Xung bắt đầu một phiên tính toán mới
-
-    input [3:0] q_index,
+    input start,       
 
     // --- Giao diện nạp ma trận H ---
     input H_in_valid,
     input signed [N-1:0] H_in_r,
     input signed [N-1:0] H_in_i,
 
-    // --- Giao diện nạp vector Y (chưa sử dụng) ---
+    // --- Giao diện nạp vector Y  ---
     input Y_in_valid,
     input signed [N-1:0] Y_in_r,
     input signed [N-1:0] Y_in_i,
     
-    // --- Đầu ra cuối cùng (chưa sử dụng) ---
-    output reg q_done,
-    output  signed [N-1:0] xI1_out,
-    output  signed [N-1:0] xQ1_out,
-    output  signed [N-1:0] xI2_out,
-    output  signed [N-1:0] xQ2_out
+    // --- OUTPUT  ---
+    output wire signed [N-1:0] s_I_1,   // Real part of symbol 1
+    output wire signed [N-1:0] s_Q_1,   // Imaginary part of symbol 1
+    output wire signed [N-1:0] s_I_2,   // Real part of symbol 2
+    output wire signed [N-1:0] s_Q_2,   // Imaginary part of symbol 2
+    output wire [4:0]        Smin_index, // Index q_min representing the matrix S_qmin
+    output wire              output_valid,
+    output wire signed [11:0] signal_out_12bit
 );
 
+assign s_I_1 = s_hat_I_1_out;
+assign s_Q_1 = s_hat_Q_1_out;
+assign s_I_2 = s_hat_I_2_out;
+assign s_Q_2 = s_hat_Q_2_out;
+assign Smin_index = S_hat_index_out;
+assign output_valid = tx_signal_out_valid;
+assign signal_out_12bit = {b2_out,b1_out};
 //----------------------------------------------------------------
 // 1. FSM State Definitions
 //----------------------------------------------------------------
@@ -70,20 +69,19 @@ reg [2:0] y_count;
 // Dây nối cho module con
 wire hq_done, hq_valid,all_16_hq_done;
 wire signed [N-1:0] hq_r, hq_i;
-wire [1:0] i_counter; // Địa chỉ đọc từ module con
+wire [1:0] i_counter; 
 wire [1:0] k_counter;
 
 
 //----------------------------------------------------------------
 // 3. Sub-module Instantiation
 //----------------------------------------------------------------
-// Module tính Hq (giả định tên là "matrix_multiplier_inst")
+// Module tính Hq
 // Dữ liệu đầu vào H được đọc từ RAM nội bộ
 matrix_multiplier  #(.N(N), .Q(Q)) hq_calc_inst(
     .clk(clk),
     .rst(rst),
     .start(start_hq_calc),
-    .q_index(q_index),
     .H_in_valid(1'b1), // Luôn hợp lệ khi đọc từ RAM
     .i_counter(i_counter),
     .k_counter(k_counter),
@@ -113,32 +111,15 @@ Dh_cal #(.N(N), .Q(Q)) dh_calc_inst(
 wire div_ovr;
 wire [N-1:0]  inversDh;
 
-reg invDh_valid;
-reg invDh_count_ena;
-reg [6:0] inv_count;
-always @(posedge clk,posedge rst) begin
-	if(rst) begin
-		 invDh_count_ena <= 1'b0;
-	end
-	else if(inv_count == (N+1))
-		invDh_count_ena <= 1'b0;
-	else if(Dh_result_valid == 1'b1)
-		invDh_count_ena <= 1'b1;
-end
-always @(posedge clk,posedge rst) begin
-	if(rst) begin
-		inv_count <= 7'd0;
-		invDh_valid <= 1'd0;
-	end
-	else if(inv_count == (N+1)) begin
-		inv_count <= 7'd0;
-		invDh_valid <= 1'd1;
-	end
-	else if(invDh_count_ena)
-		inv_count <= inv_count + 1'b1;
-	else invDh_valid <= 1'd0;
-end
-		
+wire invDh_valid;
+
+delay_module #(.N(N)) invDh_Valid_inst(
+    .clk(clk),
+    .rst(rst),
+    .in(Dh_result_valid),
+    .number(N+1), 
+    .out(invDh_valid)
+);		
 fxp_div_pipe #( 
     .WIIA  (N-Q),
     .WIFA  (Q),
@@ -148,12 +129,12 @@ fxp_div_pipe #(
     .WOF   (Q),
     .ROUND (0)
 ) invDh_inst(
- .rstn(!rst),
- .clk(clk),
- .dividend(32'd1<<Q),
- .divisor(Dh_out),
- .out(inversDh),
- .overflow(div_ovr)
+    .rstn(!rst),
+    .clk(clk),
+    .dividend(32'd1<<Q),
+    .divisor(Dh_out),
+    .out(inversDh),
+    .overflow(div_ovr)
 );
 
 wire g_valid;
@@ -177,19 +158,17 @@ g_matrix_calculator #(.N(N)) g_matrix_inst(
 );
 
 
-
-
 wire signed [N-1:0] ga1_r,ga1_i,ga2_r,ga2_i,gb1_r,gb1_i,gb2_r,gb2_i;
-wire ga1_done,ga2_done,gb1_done,gb2_done;
 wire signed [N-1:0] y_r0_r, y_r0_i, y_r1_r, y_r1_i;
-
 reg [1:0] cnt_y;
+
 always @(posedge clk) begin
 	if(rst)
 		cnt_y <= 0;
 	else if (g_valid)
 		cnt_y <= cnt_y + 1;
 end
+
 assign y_r0_r = (g_valid)? y_mem1_r[cnt_y] : 0;
 assign y_r0_i = (g_valid)? y_mem1_i[cnt_y] : 0;
 assign y_r1_r = (g_valid)? y_mem2_r[cnt_y] : 0;
@@ -210,7 +189,6 @@ trace_calculator #(
   .g_c0_i(Ga1_c0_i),
   .g_c1_r(Ga1_c1_r),
   .g_c1_i(Ga1_c1_i),
-  .done_calc(ga1_done),
   .trace_result_r(ga1_r),
   .trace_result_i(ga1_i)
 );
@@ -228,7 +206,6 @@ trace_calculator #(
   .g_c0_i(Ga2_c0_i),
   .g_c1_r(Ga2_c1_r),
   .g_c1_i(Ga2_c1_i),
-  .done_calc(ga2_done),
   .trace_result_r(ga2_r),
   .trace_result_i(ga2_i)
 );
@@ -247,7 +224,6 @@ trace_calculator #(
   .g_c0_i(Gb1_c0_i),
   .g_c1_r(Gb1_c1_r),
   .g_c1_i(Gb1_c1_i),
-  .done_calc(gb1_done),
   .trace_result_r(gb1_r),
   .trace_result_i(gb1_i)
 );
@@ -266,7 +242,6 @@ trace_calculator #(
   .g_c0_i(Gb2_c0_i),
   .g_c1_r(Gb2_c1_r),
   .g_c1_i(Gb2_c1_i),
-  .done_calc(gb2_done),
   .trace_result_r(gb2_r),
   .trace_result_i(gb2_i)
 );
@@ -300,8 +275,15 @@ delay_module #(.N(N)) delay_gb2(
     .number(6'd22), 
     .out(gb2_i_delay)
 );
+
 wire ovr_xi1,ovr_xi2,ovr_xq1,ovr_xq2;
 wire signed [N-1:0] xI1_out_tmp,xI2_out_tmp,xQ1_out_tmp,xQ2_out_tmp;
+
+wire  signed [N-1:0] xI1_out;
+wire  signed [N-1:0] xQ1_out;
+wire  signed [N-1:0] xI2_out;
+wire  signed [N-1:0] xQ2_out;
+
 qmult #(.Q(Q), .N(N)) xi1_cal_inst (
     .i_multiplicand(ga1_r_delay),
     .i_multiplier(inversDh),
@@ -342,8 +324,8 @@ MinFinder #(.N(N),.Q(Q)) dmin_inst(
 	.Rq(Rq),
 	.min_idx_dI1(m_dI1), .min_idx_dQ1(m_dQ1), .min_idx_dI2(m_dI2), .min_idx_dQ2(m_dQ2)
 );
-wire signed [N-1:0] Dh_delay;
 
+wire signed [N-1:0] Dh_delay;
 delay_module #(.N(N)) delay_dh(
     .clk(clk),
     .rst(rst),
@@ -351,13 +333,14 @@ delay_module #(.N(N)) delay_dh(
     .number(6'd33), 
     .out(Dh_delay)
 );
+
 wire signed [N-1:0] dq_out;
 wire dq_valid;
 delay_module #(.N(N)) delay_valid(
     .clk(clk),
     .rst(rst),
     .in(invDh_valid),
-    .number(6'd3), 
+    .number(6'd2), 
     .out(dq_valid)
 );
 dq_cal #(.N(N),.Q(Q)) dq_calculate (
@@ -368,6 +351,7 @@ dq_cal #(.N(N),.Q(Q)) dq_calculate (
 	.Dh(Dh_delay),
 	.dq_out(dq_out)
 );
+
 wire signed [N-1:0] dq_min;
 wire busy, min_valid;
 
@@ -400,12 +384,34 @@ find_min_inst (
     .min_m_dQ2(min_dq_m_dQ2),
     .q_min(q_min)
 );
-
-
+// Wires for determine_tx_signal outputs
+wire signed [N-1:0] s_hat_I_1_out, s_hat_Q_1_out;
+wire signed [N-1:0] s_hat_I_2_out, s_hat_Q_2_out;
+wire [4:0]         S_hat_index_out;
+wire               tx_signal_out_valid;
+determine_tx_signal #(
+    .N(N), 
+    .Q(Q)
+)
+determine_tx_signal_inst (
+    .clk(clk),
+    .rst_n(~rst),
+    .in_valid(min_valid),   
+    .m_Imin_1(min_dq_m_dI1),   
+    .m_Qmin_1(min_dq_m_dQ1),
+    .m_Imin_2(min_dq_m_dI2),
+    .m_Qmin_2(min_dq_m_dQ2),
+    .q_min(q_min),              
+    .s_hat_I_1(s_hat_I_1_out),
+    .s_hat_Q_1(s_hat_Q_1_out),
+    .s_hat_I_2(s_hat_I_2_out),
+    .s_hat_Q_2(s_hat_Q_2_out),
+    .S_hat_index(S_hat_index_out),
+    .out_valid(tx_signal_out_valid)
+);
 wire [7:0]         b1_out;
 wire [3:0]         b2_out;
 wire               final_out_valid;
-
 output_signal #(
     .N(32)
 )
@@ -426,13 +432,12 @@ output_signal_inst (
 wire load_H_done = (load_row_cnt == 2'b11 && load_col_cnt == 2'b11);
 wire load_Y_done = y_count == 3'b111;
 always @(*) begin
-    next_state = state; // Mặc định giữ nguyên trạng thái
+    next_state = state; 
     case(state)
         S_IDLE: begin
-            if (start_new_q) begin
+            if (start) begin
                 next_state = S_LOAD;
             end
-		$display("IDLE");
         end
         S_LOAD: begin
             if (H_in_valid && load_H_done) begin
@@ -441,7 +446,7 @@ always @(*) begin
         end
         S_CALC: begin
             if (hq_done) begin
-                next_state = S_IDLE; // Tính xong, quay về chờ
+                next_state = S_IDLE; 
             end
         end
         default: begin
@@ -455,17 +460,12 @@ always @(posedge clk or rst) begin
         state <= S_IDLE;
         load_row_cnt <= 2'b0;
         load_col_cnt <= 2'b0;
-	y_count      <= 3'b0;
-           start_hq_calc = 1'b1; // Kích hoạt module tính toán
-        // Reset các đầu ra
-        q_done <= 1'b0;
+	    y_count      <= 3'b0;
+        start_hq_calc = 1'b1; 
     end else begin
         state <= next_state;
-
-        // Logic hoạt động trong từng trạng thái
         if (state == S_IDLE) begin
-            // Reset bộ đếm khi chuẩn bị vào S_LOAD
-            if (start_new_q) begin
+            if (start) begin
                 load_row_cnt <= 2'b0;
                 load_col_cnt <= 2'b0;
 		y_count      <= 3'b0;
@@ -504,5 +504,4 @@ always @(posedge clk or rst) begin
         end
     end
 end
-
 endmodule
