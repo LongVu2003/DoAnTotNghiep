@@ -7,8 +7,8 @@ module matrix_multiplier #(
 (
     input clk,
     input rst,
+
     input start,
-    input H_in_valid,
     input signed [N-1:0] H_in_r,
     input signed [N-1:0] H_in_i, 
     output [1:0] i_counter,k_counter,
@@ -19,13 +19,6 @@ module matrix_multiplier #(
     output reg signed [N-1:0] Hq_out_i
 );
 
-    localparam S_IDLE         = 2'd0;
-    localparam S_LOAD_H       = 2'd1;
-    localparam S_CALC_ELEMENT = 2'd2;
-    localparam S_DONE         = 2'd3;
-
-    reg [3:0] state, next_state;
-
     reg [1:0] load_row_cnt;
     reg [1:0] load_col_cnt;
     reg [1:0] i_counter;
@@ -35,7 +28,19 @@ module matrix_multiplier #(
 
     reg signed [N-1:0] s_data_r, s_data_i;
     wire signed [N-1:0] mac_result_r, mac_result_i;
-
+    
+    reg cal_en;
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            cal_en <= 0;
+        end else if (start ) begin
+            cal_en <= 1;
+        end else if(all_16_hq_done) begin
+            cal_en <= 0;
+        end else begin
+            cal_en <= cal_en;
+        end
+    end
 
     always @(*) begin : sq_block
         localparam P_HALF = 32'h00200000;
@@ -175,45 +180,6 @@ module matrix_multiplier #(
         endcase
     end
 
-    always @(*) begin
-        next_state = state;
-        hq_one_matrix_done = 1'b0;
-        all_16_hq_done = 1'b0;
-	case (state)
-            S_IDLE: begin
-                if (start) begin
-                    next_state = S_CALC_ELEMENT;
-                end
-            end
-            S_LOAD_H: begin
-                if (H_in_valid && load_row_cnt == 2'b11 && load_col_cnt == 2'b11) begin
-                    next_state = S_CALC_ELEMENT;
-                end
-            end
-            S_CALC_ELEMENT: begin
-                if (k_counter_delay == 2'b11) begin
-                    if (i_counter_delay == 3 && j_counter_delay == 1) begin //nhan xong hang 4 mt H va cot 2 ma tran S 
-                        hq_one_matrix_done = 1'b1;
-                        if (q_counter_reg_delay == 15) begin
-                            next_state = S_DONE;
-                        end else begin
-                            next_state = S_CALC_ELEMENT;
-                        end
-                    end else begin
-                        next_state = S_CALC_ELEMENT;
-                    end
-                end
-			
-            end
-            S_DONE: begin
-		        all_16_hq_done = 1'b1;
-                if (!start) begin
-                    next_state = S_IDLE;
-                end
-            end
-            default: next_state = S_IDLE;
-        endcase
-    end
 
     wire [1:0] i_counter_delay;
     wire       j_counter_delay;
@@ -251,7 +217,6 @@ module matrix_multiplier #(
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            state <= S_IDLE;
             load_row_cnt <= 2'b0;
             load_col_cnt <= 2'b0;
             q_counter_reg <= 0;
@@ -259,28 +224,27 @@ module matrix_multiplier #(
             j_counter <= 1'b0;
             k_counter <= 2'b0;
             Hq_out_valid <= 1'b0;
-        end else begin
-            state <= next_state;
-            if (state == S_IDLE) begin
-                load_row_cnt <= 2'b0;
-                load_col_cnt <= 2'b0;
-		        q_counter_reg <= 0;
-                i_counter <= 2'b0;
-                j_counter <= 1'b0;
-                k_counter <= 2'b0;
-                Hq_out_valid <= 1'b0;
-            end
-            if (state == S_CALC_ELEMENT) begin
-		        if(k_counter_delay == 2'b11) begin
-			        Hq_out_r <= mac_result_r;
+        end else if(cal_en) begin
+		    if(k_counter_delay == 2'b11) begin
+                    Hq_out_r <= mac_result_r;
 			        Hq_out_i <= mac_result_i;
                     Hq_out_valid <= 1'b1;
-		        end
-                else begin
+                    if (i_counter_delay == 3 && j_counter_delay == 1) begin //nhan xong hang 4 mt H va cot 2 ma tran S 
+                        hq_one_matrix_done <= 1'b1;
+                        if (q_counter_reg_delay == 15) begin
+                            all_16_hq_done <= 1'b1;
+                        end
+                        else begin
+                            all_16_hq_done <= 1'b0;
+                        end
+                    end else begin
+                            hq_one_matrix_done <= 1'b0;
+                        end   
+		    end else begin
                     Hq_out_r <= Hq_out_r;
                     Hq_out_i <= Hq_out_i;   
                     Hq_out_valid <= 1'b0;
-                end
+            end
                 k_counter <= k_counter + 1;
                 if (k_counter == 2'b11) begin // Neu nhan xong 1 hang H va 1 cot S
                     k_counter <= 0;
@@ -296,7 +260,7 @@ module matrix_multiplier #(
                         j_counter <= j_counter + 1;
                     end
                 end
-	        end
+	        
         end
     end
 
