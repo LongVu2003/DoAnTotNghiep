@@ -67,17 +67,18 @@ initial begin
     reset_dut();
     // --- CHẠY CÁC TEST CASE ---
     testcase(1, 1); // Đọc H1 và Y1 từ file
-    testcase(1, 2); // Đọc H1 và Y2
-    testcase(1, 3); // Đọc H1 và Y3
-    testcase(1, 4); // Đọc H1 và Y4
-    testcase(1, 5); // Đọc H1 và Y5
-    testcase(1, 6); // Đọc H1 và Y6
-    testcase(1, 7); // Đọc H1 và Y7
-    testcase(1, 8); // Đọc H1 và Y8
-    testcase(1, 9); // Đọc H1 và Y9
-    testcase(1, 10); // Đọc H1 và Y10
+    testcase(1, 2); // Đọc H1 và Y2 từ file
+    testcase(1, 3); // Đọc H1 và Y3 từ file
+    testcase(1, 4); // Đọc H1 và Y4 từ file
+    testcase(1, 5); // Đọc H1 và Y5 từ file
+    testcase(1, 6); // Đọc H1 và Y6 từ file
+    testcase(1, 7); // Đọc H1 và Y7 từ file
+    testcase(1, 8); // Đọc H1 và Y8 từ file 
+    testcase(1, 9); // Đọc H1 và Y9 từ file
+    testcase(1, 10); // Đọc H1 và Y10 từ file
+    $display("ALL TESTCASES COMPLETED at %t", $time);
 
-    #1000;  
+    #6000;  
     $finish;  
 end
 

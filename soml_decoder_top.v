@@ -77,33 +77,59 @@ wire [1:0] k_counter;
 // 3. Sub-module Instantiation
 //----------------------------------------------------------------
 // Module tính Hq
-// Dữ liệu đầu vào H được đọc từ RAM nội bộ
+reg signed [0 :N*8-1] H_row0_r, H_row0_i, H_row1_r, H_row1_i;
+reg signed [0 :N*8-1] H_row2_r, H_row2_i, H_row3_r, H_row3_i;
+
+always @(posedge clk) begin  
+    if(rst) begin
+        H_row0_r <= 0;
+        H_row0_i <= 0;
+        H_row1_r <= 0;
+        H_row1_i <= 0;
+        H_row2_r <= 0;
+        H_row2_i <= 0;
+        H_row3_r <= 0;
+        H_row3_i <= 0;
+    end
+    else if(start_hq_calc) begin
+        H_row0_r <= {h_mem_real[0][0], h_mem_real[0][0], h_mem_real[1][0], h_mem_real[1][0],h_mem_real[2][0], h_mem_real[2][0], h_mem_real[3][0], h_mem_real[3][0]};
+        H_row0_i <= {h_mem_imag[0][0], h_mem_imag[0][0], h_mem_imag[1][0], h_mem_imag[1][0],h_mem_imag[2][0], h_mem_imag[2][0], h_mem_imag[3][0], h_mem_imag[3][0]};
+        H_row1_r <= {h_mem_real[0][1], h_mem_real[0][1], h_mem_real[1][1], h_mem_real[1][1],h_mem_real[2][1], h_mem_real[2][1], h_mem_real[3][1], h_mem_real[3][1]};
+        H_row1_i <= {h_mem_imag[0][1], h_mem_imag[0][1], h_mem_imag[1][1], h_mem_imag[1][1],h_mem_imag[2][1], h_mem_imag[2][1], h_mem_imag[3][1], h_mem_imag[3][1]};
+        H_row2_r <= {h_mem_real[0][2], h_mem_real[0][2], h_mem_real[1][2], h_mem_real[1][2],h_mem_real[2][2], h_mem_real[2][2], h_mem_real[3][2], h_mem_real[3][2]};
+        H_row2_i <= {h_mem_imag[0][2], h_mem_imag[0][2], h_mem_imag[1][2], h_mem_imag[1][2],h_mem_imag[2][2], h_mem_imag[2][2], h_mem_imag[3][2], h_mem_imag[3][2]};
+        H_row3_r <= {h_mem_real[0][3], h_mem_real[0][3], h_mem_real[1][3], h_mem_real[1][3],h_mem_real[2][3], h_mem_real[2][3], h_mem_real[3][3], h_mem_real[3][3]};
+        H_row3_i <= {h_mem_imag[0][3], h_mem_imag[0][3], h_mem_imag[1][3], h_mem_imag[1][3],h_mem_imag[2][3], h_mem_imag[2][3], h_mem_imag[3][3], h_mem_imag[3][3]};
+    end
+end
 matrix_multiplier  #(.N(N), .Q(Q)) hq_calc_inst(
     .clk(clk),
     .rst(rst),
-    .start(start_hq_calc || all_16_hq_done),
-    .i_counter(i_counter),
-    .k_counter(k_counter),
-    .H_in_r(h_mem_real[i_counter][k_counter]),
-    .H_in_i(h_mem_imag[i_counter][k_counter]),
+    .start(start_hq_calc),
+
+    .H_row0_r(H_row0_r),
+    .H_row0_i(H_row0_i),
+    .H_row1_r(H_row1_r),
+    .H_row1_i(H_row1_i),
+    .H_row2_r(H_row2_r),
+    .H_row2_i(H_row2_i),
+    .H_row3_r(H_row3_r),
+    .H_row3_i(H_row3_i),
     .hq_one_matrix_done(hq_done),
     .all_16_hq_done(all_16_hq_done),
-    .Hq_out_valid(hq_valid),
+    .Hq_valid(hq_valid),
     .Hq_out_r(hq_r),
     .Hq_out_i(hq_i)
 );
-wire Dh_en;
-wire signed [N-1:0] dh_in_r,dh_in_i;
+
 wire signed [N-1:0] Dh_out;
-assign dh_in_r = (hq_valid)? hq_r : dh_in_r;
-assign dh_in_i = (hq_valid)? hq_i : dh_in_i;
 wire Dh_result_valid;
 Dh_cal #(.N(N), .Q(Q)) dh_calc_inst(
       .clk(clk),
       .rst(rst),
-      .Dh_en(hq_valid), 
-      .in_real(dh_in_r),
-      .in_im(dh_in_i),
+      .Dh_en(hq_valid),
+      .in_real(hq_r),
+      .in_im(hq_i),
       .Dh_out(Dh_out),
       .Dh_result_valid(Dh_result_valid)
 );
