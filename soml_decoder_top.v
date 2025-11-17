@@ -344,6 +344,8 @@ wire signed [N-1:0] Rq;
 wire signed [2:0] m_dI1, m_dI2, m_dQ1, m_dQ2;
 
 MinFinder #(.N(N),.Q(Q)) dmin_inst(
+    .clk(clk),
+    .rst_n(!rst),
 	.xI1(xI1_out), .xQ1(xQ1_out), .xI2(xI2_out), .xQ2(xQ2_out),
 	.min_dI1(dI1), .min_dQ1(dQ1), .min_dI2(dI2), .min_dQ2(dQ2),
 	.Rq(Rq),
@@ -476,13 +478,13 @@ always @(*) begin
     endcase
 end
 
-always @(posedge clk or rst) begin
+always @(posedge clk or posedge rst) begin
     if (rst) begin
         state <= S_IDLE;
         load_row_cnt <= 2'b0;
         load_col_cnt <= 2'b0;
 	    y_count      <= 3'b0;
-        start_hq_calc = 1'b0; 
+        start_hq_calc <= 1'b0; 
     end else begin
         state <= next_state;
         if (state == S_IDLE) begin

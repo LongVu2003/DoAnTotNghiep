@@ -3,16 +3,16 @@ module DistanceSquare #(
 	parameter Q = 8
 ) (
     input signed [N-1:0] v_m,
-    input signed [N-1:0] ref,
-    output signed [N-1:0] dist
+    input signed [N-1:0] in_ref,
+    output signed [N-1:0] out_dist
 );
     wire signed [N-1:0] diff;
     wire ovr;
-    assign diff = v_m - ref;
+    assign diff = v_m - in_ref;
     qmult #(.Q(Q), .N(N)) qmult_common (
       .i_multiplicand(diff),
       .i_multiplier(diff),
-      .o_result(dist),
+      .o_result(out_dist),
       .ovr(ovr)
   );
 endmodule
