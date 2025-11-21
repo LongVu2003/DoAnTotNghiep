@@ -18,22 +18,17 @@ module Dh_cal #(
     input signed [N-1:0] in_real,
     input signed [N-1:0] in_im,
 
-    output reg signed [N-1:0] Dh_out,
+    output signed [N-1:0] Dh_out,
     output reg Dh_result_valid
 );
-    // Độ rộng thanh ghi tích lũy đủ lớn để tránh tràn số
-    localparam ACC_WIDTH = 2*N + 3; // 32 + log2(8) = 35 bits
 
     // Các tín hiệu trung gian
     wire signed [N-1:0] product_r, product_i;
     wire ovr_multr, ovr_multi;
-    wire signed [N:0] SoP; // Sum of Products (|Hq|^2 cho một phần tử)
+    wire signed [N:0] SoP; 
 
-    reg [2:0] dh_count; // Đếm từ 0 đến 7
-    reg signed [ACC_WIDTH-1:0] dh_reg;
+    reg [2:0] dh_count; 
     
-    // Tín hiệu nội bộ để tự động clear
-    wire internal_clear;
 
     // --- Khối nhân tổ hợp ---
     qmult #(.Q(Q), .N(N)) qmult_real (
@@ -50,38 +45,46 @@ module Dh_cal #(
         .ovr(ovr_multi)
     );
 
-    // Tính |Hq|^2 = real^2 + imag^2
     assign SoP = product_r + product_i;
-    
-    // --- Logic Tích Lũy và Đếm ---
-    // Tự động clear khi reset hoặc khi tính xong kết quả
-    assign internal_clear = Dh_result_valid;
+
+    reg signed  [N:0] sop_d,sop_2d,sop_3d,sop_4d,sop_5d,sop_6d,sop_7d;
 
     always @(posedge clk or posedge rst) begin
+        if(rst) begin
+            sop_d <= 0;
+            sop_2d <= 0;
+            sop_3d <= 0;
+            sop_4d <= 0;
+            sop_5d <= 0;
+            sop_6d <= 0;
+            sop_7d <= 0;
+        end else if(Dh_en) begin
+            sop_d <= SoP;
+            sop_2d <= sop_d;
+            sop_3d <= sop_2d;
+            sop_4d <= sop_3d;
+            sop_5d <= sop_4d;
+            sop_6d <= sop_5d;
+            sop_7d <= sop_6d;
+        end
+    end
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
-            dh_reg <= 0;
-            dh_count <= 0;
-        end else if (internal_clear) begin
-            dh_reg <= 0;
             dh_count <= 0;
         end else if (Dh_en) begin
-            // Tích lũy ngay khi có Dh_en, vì SoP là tổ hợp
-            dh_reg <= dh_reg + {{ACC_WIDTH-N-1{SoP[N]}}, SoP};
             dh_count <= dh_count + 1;
         end
     end
+    wire signed [N:0] Dh_out_tmp;
+    assign Dh_out_tmp = SoP + sop_d + sop_2d + sop_3d + sop_4d + sop_5d + sop_6d + sop_7d;
+    assign Dh_out =(dh_count == 3'd7)? Dh_out_tmp[N-1:0] :Dh_out ; 
 
-    // --- Logic Xuất Kết Quả ---
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             Dh_result_valid <= 1'b0;
-            Dh_out <= 0;
         end else begin
-            // Báo valid khi nhận đủ 8 giá trị (đếm từ 0 đến 7)
-            if ((dh_count == 3'd7)&& Dh_en) begin
+            if ((dh_count == 3'd6)&& Dh_en) begin
                 Dh_result_valid <= 1'b1;
-                // Kết quả cuối cùng là giá trị tích lũy hiện tại CỘNG với giá trị SoP cuối cùng
-                Dh_out <= (dh_reg + {{ACC_WIDTH-N-1{SoP[N]}}, SoP});
             end else begin
                 Dh_result_valid <= 1'b0;
             end

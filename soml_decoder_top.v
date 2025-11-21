@@ -77,34 +77,59 @@ wire [1:0] k_counter;
 // 3. Sub-module Instantiation
 //----------------------------------------------------------------
 // Module tính Hq
-// Dữ liệu đầu vào H được đọc từ RAM nội bộ
+reg signed [0 :N*8-1] H_row0_r, H_row0_i, H_row1_r, H_row1_i;
+reg signed [0 :N*8-1] H_row2_r, H_row2_i, H_row3_r, H_row3_i;
+
+always @(posedge clk) begin  
+    if(rst) begin
+        H_row0_r <= 0;
+        H_row0_i <= 0;
+        H_row1_r <= 0;
+        H_row1_i <= 0;
+        H_row2_r <= 0;
+        H_row2_i <= 0;
+        H_row3_r <= 0;
+        H_row3_i <= 0;
+    end
+    else if(start_hq_calc) begin
+        H_row0_r <= {h_mem_real[0][0], h_mem_real[0][0], h_mem_real[1][0], h_mem_real[1][0],h_mem_real[2][0], h_mem_real[2][0], h_mem_real[3][0], h_mem_real[3][0]};
+        H_row0_i <= {h_mem_imag[0][0], h_mem_imag[0][0], h_mem_imag[1][0], h_mem_imag[1][0],h_mem_imag[2][0], h_mem_imag[2][0], h_mem_imag[3][0], h_mem_imag[3][0]};
+        H_row1_r <= {h_mem_real[0][1], h_mem_real[0][1], h_mem_real[1][1], h_mem_real[1][1],h_mem_real[2][1], h_mem_real[2][1], h_mem_real[3][1], h_mem_real[3][1]};
+        H_row1_i <= {h_mem_imag[0][1], h_mem_imag[0][1], h_mem_imag[1][1], h_mem_imag[1][1],h_mem_imag[2][1], h_mem_imag[2][1], h_mem_imag[3][1], h_mem_imag[3][1]};
+        H_row2_r <= {h_mem_real[0][2], h_mem_real[0][2], h_mem_real[1][2], h_mem_real[1][2],h_mem_real[2][2], h_mem_real[2][2], h_mem_real[3][2], h_mem_real[3][2]};
+        H_row2_i <= {h_mem_imag[0][2], h_mem_imag[0][2], h_mem_imag[1][2], h_mem_imag[1][2],h_mem_imag[2][2], h_mem_imag[2][2], h_mem_imag[3][2], h_mem_imag[3][2]};
+        H_row3_r <= {h_mem_real[0][3], h_mem_real[0][3], h_mem_real[1][3], h_mem_real[1][3],h_mem_real[2][3], h_mem_real[2][3], h_mem_real[3][3], h_mem_real[3][3]};
+        H_row3_i <= {h_mem_imag[0][3], h_mem_imag[0][3], h_mem_imag[1][3], h_mem_imag[1][3],h_mem_imag[2][3], h_mem_imag[2][3], h_mem_imag[3][3], h_mem_imag[3][3]};
+    end
+end
 matrix_multiplier  #(.N(N), .Q(Q)) hq_calc_inst(
     .clk(clk),
     .rst(rst),
     .start(start_hq_calc),
-    .H_in_valid(1'b1), // Luôn hợp lệ khi đọc từ RAM
-    .i_counter(i_counter),
-    .k_counter(k_counter),
-    .H_in_r(h_mem_real[i_counter][k_counter]),
-    .H_in_i(h_mem_imag[i_counter][k_counter]),
+
+    .H_row0_r(H_row0_r),
+    .H_row0_i(H_row0_i),
+    .H_row1_r(H_row1_r),
+    .H_row1_i(H_row1_i),
+    .H_row2_r(H_row2_r),
+    .H_row2_i(H_row2_i),
+    .H_row3_r(H_row3_r),
+    .H_row3_i(H_row3_i),
     .hq_one_matrix_done(hq_done),
     .all_16_hq_done(all_16_hq_done),
-    .Hq_out_valid(hq_valid),
+    .Hq_valid(hq_valid),
     .Hq_out_r(hq_r),
     .Hq_out_i(hq_i)
 );
-wire Dh_en;
-wire signed [N-1:0] dh_in_r,dh_in_i;
-wire signed [N-1:0] Dh_out;
-assign dh_in_r = (hq_valid)? hq_r : dh_in_r;
-assign dh_in_i = (hq_valid)? hq_i : dh_in_i;
 
+wire signed [N-1:0] Dh_out;
+wire Dh_result_valid;
 Dh_cal #(.N(N), .Q(Q)) dh_calc_inst(
       .clk(clk),
       .rst(rst),
-      .Dh_en(hq_valid), 
-      .in_real(dh_in_r),
-      .in_im(dh_in_i),
+      .Dh_en(hq_valid),
+      .in_real(hq_r),
+      .in_im(hq_i),
       .Dh_out(Dh_out),
       .Dh_result_valid(Dh_result_valid)
 );
@@ -319,6 +344,8 @@ wire signed [N-1:0] Rq;
 wire signed [2:0] m_dI1, m_dI2, m_dQ1, m_dQ2;
 
 MinFinder #(.N(N),.Q(Q)) dmin_inst(
+    .clk(clk),
+    .rst_n(!rst),
 	.xI1(xI1_out), .xQ1(xQ1_out), .xI2(xI2_out), .xQ2(xQ2_out),
 	.min_dI1(dI1), .min_dQ1(dQ1), .min_dI2(dI2), .min_dQ2(dQ2),
 	.Rq(Rq),
@@ -431,22 +458,18 @@ output_signal_inst (
 
 wire load_H_done = (load_row_cnt == 2'b11 && load_col_cnt == 2'b11);
 wire load_Y_done = y_count == 3'b111;
+
 always @(*) begin
     next_state = state; 
     case(state)
         S_IDLE: begin
-            if (start) begin
+            if (start || load_H_done) begin
                 next_state = S_LOAD;
             end
         end
         S_LOAD: begin
             if (H_in_valid && load_H_done) begin
-                next_state = S_CALC;
-            end
-        end
-        S_CALC: begin
-            if (hq_done) begin
-                next_state = S_IDLE; 
+                next_state = S_IDLE;
             end
         end
         default: begin
@@ -455,33 +478,33 @@ always @(*) begin
     endcase
 end
 
-always @(posedge clk or rst) begin
+always @(posedge clk or posedge rst) begin
     if (rst) begin
         state <= S_IDLE;
         load_row_cnt <= 2'b0;
         load_col_cnt <= 2'b0;
 	    y_count      <= 3'b0;
-        start_hq_calc = 1'b1; 
+        start_hq_calc <= 1'b0; 
     end else begin
         state <= next_state;
         if (state == S_IDLE) begin
+            start_hq_calc <= 1'b0;
             if (start) begin
                 load_row_cnt <= 2'b0;
                 load_col_cnt <= 2'b0;
-		y_count      <= 3'b0;
+		        y_count      <= 3'b0;
             end
-        end
-	if (state == S_LOAD && next_state == S_CALC) begin
-            start_hq_calc <= 1'b1; // assert 1 cycle
-        end else begin
-            start_hq_calc <= 1'b0;
         end
         if (state == S_LOAD) begin
             if (H_in_valid) begin
+                if (load_H_done) begin
+                    start_hq_calc <= 1'b1;
+                end else begin
+                    start_hq_calc <= 1'b0;
+                end
                 // Ghi dữ liệu vào RAM
                 h_mem_real[load_row_cnt][load_col_cnt] <= H_in_r;
                 h_mem_imag[load_row_cnt][load_col_cnt] <= H_in_i;
-
                 // Cập nhật bộ đếm
                 if (load_col_cnt == 2'b11) begin
                     load_col_cnt <= 2'b0;
@@ -490,17 +513,17 @@ always @(posedge clk or rst) begin
                     load_col_cnt <= load_col_cnt + 1;
                 end
             end
-	    if(Y_in_valid == 1) begin
-		y_count <= y_count + 1;
-		if(y_count < 4) begin
-			y_mem1_r[y_count] <= Y_in_r;
-			y_mem1_i[y_count] <= -Y_in_i;
-		end else if(y_count > 3 && y_count < 8) begin
-			y_mem2_r[y_count-3'd4] <= Y_in_r;
-			y_mem2_i[y_count-3'd4] <= -Y_in_i;
-		end
-		if(y_count == 3'b111) y_count = 3'b000;
-	    end	
+	        if(Y_in_valid == 1) begin
+		        y_count <= y_count + 1;
+                if(y_count < 4) begin
+                    y_mem1_r[y_count] <= Y_in_r;
+                    y_mem1_i[y_count] <= -Y_in_i;
+                end else if(y_count > 3 && y_count < 8) begin
+                    y_mem2_r[y_count-3'd4] <= Y_in_r;
+                    y_mem2_i[y_count-3'd4] <= -Y_in_i;
+                end
+                if(y_count == 3'b111) y_count <= 3'b000;
+	        end	
         end
     end
 end

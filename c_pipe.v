@@ -1,19 +1,11 @@
-/*
-* Module: c_mac
-* Chức năng: Tích lũy Nhân Phức (Complex Multiplier Accumulator)
-* Sửa lỗi: Đồng bộ hóa pipeline 5 chu kỳ của khối nhân (cmult)
-* Phương pháp: Sử dụng pipeline valid signal để điều khiển tích lũy.
-*/
 
-//`include "cmult.sv" // Giả định cmult có độ trễ 5 chu kỳ
 module c_pipe #(
-    parameter Q = 8,  // Độ rộng bit phần thập phân (Fixed-point)
-    parameter N = 16 // Tổng độ rộng bit
+    parameter Q = 8,  
+    parameter N = 16 
 )
 (
     input clk,
     input rst,
-    input mac_en, // Tín hiệu báo hiệu dữ liệu (in_ar, in_ai, in_br, in_bi) là hợp lệ
     input signed [N-1:0] in_ar, in_ai,
     input signed [N-1:0] in_br, in_bi,
 
@@ -23,7 +15,7 @@ module c_pipe #(
     reg signed  [N-1:0] pr_d,pr_dd,pr_ddd;
     reg signed  [N-1:0] pi_d,pi_dd,pi_ddd;
     cmult #( .Q(Q), .N(N) )
-    cmult_inst (
+    cmult_inst ( // Khối nhân 2 số phức pipeline 5 chu kỳ
         .clk(clk),
         .rst(rst),
         .ar(in_ar),
