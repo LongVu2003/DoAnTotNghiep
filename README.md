@@ -1,2 +1,0 @@
-# DoAnTotNghiep
-SO-ML Decoder
