@@ -1,0 +1,2 @@
+Warning (10268): Verilog HDL information at fxp_div_pipe.v(94): always construct contains both blocking and non-blocking assignments File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project - work - Copy (2)/code/fxp_div_pipe.v Line: 94
+Warning (10268): Verilog HDL information at uart_top.v(452): always construct contains both blocking and non-blocking assignments File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project - work - Copy (2)/uart/uart_top.v Line: 452

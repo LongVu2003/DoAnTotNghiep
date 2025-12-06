@@ -1,0 +1,191 @@
+`timescale 1ns / 1ps
+
+module tb_soml_decoder;
+
+    // ============================================================
+    // 1. PARAMETERS & SIGNALS
+    // ============================================================
+    parameter N = 32;
+    parameter Q = 22;
+    
+    // Hệ số Q22 (2^22 = 4194304)
+    localparam integer ONE_Q22 = 4194304; 
+
+    // Inputs
+    reg clk;
+    reg rst;
+    reg start;
+    
+    reg H_in_valid;
+    reg signed [N-1:0] H_in_r;
+    reg signed [N-1:0] H_in_i;
+    
+    reg Y_in_valid;
+    reg signed [N-1:0] Y_in_r;
+    reg signed [N-1:0] Y_in_i;
+
+    // Outputs
+    wire signed [N-1:0] s_I_1, s_Q_1, s_I_2, s_Q_2;
+    wire [4:0] Smin_index;
+    wire output_valid;
+    wire signed [11:0] signal_out_12bit;
+
+    // ============================================================
+    // 2. INSTANTIATE THE DUT (Device Under Test)
+    // ============================================================
+    soml_decoder_top #(
+        .Q(Q),
+        .N(N)
+    ) uut (
+        .clk(clk), 
+        .rst(rst), 
+        .start(start), 
+        
+        // H Interface
+        .H_in_valid(H_in_valid), 
+        .H_in_r(H_in_r), 
+        .H_in_i(H_in_i), 
+        
+        // Y Interface
+        .Y_in_valid(Y_in_valid), 
+        .Y_in_r(Y_in_r), 
+        .Y_in_i(Y_in_i), 
+        
+        // Outputs
+        .s_I_1(s_I_1), 
+        .s_Q_1(s_Q_1), 
+        .s_I_2(s_I_2), 
+        .s_Q_2(s_Q_2), 
+        .Smin_index(Smin_index), 
+        .output_valid(output_valid), 
+        .signal_out_12bit(signal_out_12bit)
+    );
+
+    // ============================================================
+    // 3. CLOCK GENERATION (100MHz)
+    // ============================================================
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // Period = 10ns
+    end
+
+    // ============================================================
+    // 4. TASKS (Hàm hỗ trợ gửi dữ liệu)
+    // ============================================================
+    
+    // Task gửi 1 phần tử của ma trận H
+    task send_H_element;
+        input real real_val;
+        input real imag_val;
+        begin
+            @(posedge clk);
+            H_in_valid <= 1;
+            // Chuyển đổi Float -> Fixed Point Q22
+            H_in_r <= $rtoi(real_val * 4194304.0); 
+            H_in_i <= $rtoi(imag_val * 4194304.0);
+            @(posedge clk);
+            H_in_valid <= 0;
+        end
+    endtask
+
+    // Task gửi 1 phần tử của vector Y
+    // LƯU Ý: Task này tự động ĐẢO DẤU phần ảo (nếu logic FPGA cần -Im)
+    // Hoặc giữ nguyên tùy logic bạn chọn. Ở đây giả sử FPGA code 1 (có dấu trừ trong code)
+    // nên ta gửi giá trị dương bình thường.
+    task send_Y_element;
+        input real real_val;
+        input real imag_val;
+        begin
+            @(posedge clk);
+            Y_in_valid <= 1;
+            Y_in_r <= $rtoi(real_val * 4194304.0);
+            Y_in_i <= $rtoi(imag_val * 4194304.0); 
+            @(posedge clk);
+            Y_in_valid <= 0;
+        end
+    endtask
+
+    // ============================================================
+    // 5. MAIN TEST SCENARIO
+    // ============================================================
+    initial begin
+        // --- Khởi tạo ---
+        rst = 1;
+        start = 0;
+        H_in_valid = 0; H_in_r = 0; H_in_i = 0;
+        Y_in_valid = 0; Y_in_r = 0; Y_in_i = 0;
+
+        // --- Reset hệ thống ---
+        #100;
+        rst = 0;
+        #20;
+        
+        // --- Bắt đầu quy trình ---
+        $display("--- [TB] START SIMULATION ---");
+        start = 1;
+        #10;
+        start = 0;
+        #20;
+
+        // --------------------------------------------------------
+        // BƯỚC 1: NẠP MA TRẬN H (4x4) - Kênh lý tưởng (Identity)
+        // --------------------------------------------------------
+        // H = Identity Matrix (Đường chéo = 1.0, còn lại = 0)
+        $display("--- [TB] Loading H Matrix (Identity)...");
+        
+        // Row 0
+        send_H_element(1.0, 0.0); send_H_element(0.0, 0.0); send_H_element(0.0, 0.0); send_H_element(0.0, 0.0);
+        // Row 1
+        send_H_element(0.0, 0.0); send_H_element(1.0, 0.0); send_H_element(0.0, 0.0); send_H_element(0.0, 0.0);
+        // Row 2
+        send_H_element(0.0, 0.0); send_H_element(0.0, 0.0); send_H_element(1.0, 0.0); send_H_element(0.0, 0.0);
+        // Row 3
+        send_H_element(0.0, 0.0); send_H_element(0.0, 0.0); send_H_element(0.0, 0.0); send_H_element(1.0, 0.0);
+
+        #100; // Nghỉ một chút giữa H và Y
+
+        // --------------------------------------------------------
+        // BƯỚC 2: NẠP VECTOR Y (4x2) -> Gồm 8 số phức
+        // --------------------------------------------------------
+        // Giả sử Input là 0xCCC (1100 1100 1100)
+        // Sc=12, Sym1=(3,3), Sym2=(3,3)
+        // Với H=Identity, Y sẽ xấp xỉ C_tx.
+        // Dưới đây là giá trị Y tính toán trước cho Input 0xCCC với H=I
+        
+        $display("--- [TB] Loading Y Vector (Target Input: 0xCCC)...");
+        
+        // Y column 1 (4 phần tử đầu)
+        send_Y_element(0.0, -0.5);  // Y[0][0]
+        send_Y_element(0.0, -0.5);  // Y[1][0]
+        send_Y_element(0.0, 0.5);   // Y[2][0]
+        send_Y_element(0.0, 0.5);   // Y[3][0]
+        
+        // Y column 2 (4 phần tử sau)
+        send_Y_element(0.5, 0.0);   // Y[0][1]
+        send_Y_element(0.5, 0.0);   // Y[1][1]
+        send_Y_element(0.5, 0.0);   // Y[2][1]
+        send_Y_element(0.5, 0.0);   // Y[3][1]
+
+        $display("--- [TB] Data Loaded. Waiting for Processing...");
+
+        // --------------------------------------------------------
+        // BƯỚC 3: CHỜ KẾT QUẢ
+        // --------------------------------------------------------
+        wait(output_valid);
+        #10;
+        
+        $display("--- [TB] RESULT RECEIVED ---");
+        $display("Output 12-bit: 0x%h (Expected: 0xCCC)", signal_out_12bit);
+        $display("Antenna Index: %d", Smin_index);
+        
+        if (signal_out_12bit == 12'hCCC) begin
+            $display("✅ TEST PASSED! Output matches Input.");
+        end else begin
+            $display("❌ TEST FAILED! Output mismatch.");
+        end
+
+        #1000;
+        $finish;
+    end
+
+endmodule

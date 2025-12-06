@@ -1,0 +1,362 @@
+# Reading C:/intelFPGA/17.1/modelsim_ase/tcl/vsim/pref.tcl
+# do SOML_project_run_msim_rtl_verilog.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 10.5b Lib Mapping Utility 2016.10 Oct  5 2016
+# vmap work rtl_work 
+# Copying C:/intelFPGA/17.1/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/trace_caculator.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:14 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/trace_caculator.v 
+# -- Compiling module trace_calculator
+# 
+# Top level modules:
+# 	trace_calculator
+# End time: 14:49:14 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:14 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v 
+# -- Compiling module soml_decoder_top
+# 
+# Top level modules:
+# 	soml_decoder_top
+# End time: 14:49:14 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Rq_cal.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:14 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Rq_cal.v 
+# -- Compiling module Rq_cal
+# 
+# Top level modules:
+# 	Rq_cal
+# End time: 14:49:14 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/qmult.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:14 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/qmult.v 
+# -- Compiling module qmult
+# 
+# Top level modules:
+# 	qmult
+# End time: 14:49:14 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:14 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v 
+# -- Compiling module output_signal
+# 
+# Top level modules:
+# 	output_signal
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinSelector.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinSelector.v 
+# -- Compiling module MinSelector
+# 
+# Top level modules:
+# 	MinSelector
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinFinder.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinFinder.v 
+# -- Compiling module MinFinder
+# 
+# Top level modules:
+# 	MinFinder
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v 
+# -- Compiling module matrix_multiplier
+# 
+# Top level modules:
+# 	matrix_multiplier
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/g_matrix_caculator.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/g_matrix_caculator.v 
+# -- Compiling module g_matrix_calculator
+# 
+# Top level modules:
+# 	g_matrix_calculator
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_zoom.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_zoom.v 
+# -- Compiling module fxp_zoom
+# 
+# Top level modules:
+# 	fxp_zoom
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_div_pipe.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_div_pipe.v 
+# -- Compiling module fxp_div_pipe
+# 
+# Top level modules:
+# 	fxp_div_pipe
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v 
+# -- Compiling module find_min
+# 
+# Top level modules:
+# 	find_min
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/dq_cal.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/dq_cal.v 
+# -- Compiling module dq_cal
+# 
+# Top level modules:
+# 	dq_cal
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/DistanceSquare.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/DistanceSquare.v 
+# -- Compiling module DistanceSquare
+# 
+# Top level modules:
+# 	DistanceSquare
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Dh_cal.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Dh_cal.v 
+# -- Compiling module Dh_cal
+# 
+# Top level modules:
+# 	Dh_cal
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v 
+# -- Compiling module determine_tx_signal
+# 
+# Top level modules:
+# 	determine_tx_signal
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v 
+# -- Compiling module delay_module
+# 
+# Top level modules:
+# 	delay_module
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/comparator.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/comparator.v 
+# -- Compiling module comparator
+# 
+# Top level modules:
+# 	comparator
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/cmult.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/cmult.v 
+# -- Compiling module cmult
+# 
+# Top level modules:
+# 	cmult
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/code {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/c_mac.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/c_mac.v 
+# -- Compiling module c_mac
+# 
+# Top level modules:
+# 	c_mac
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/uart {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/BaudTickGen.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/BaudTickGen.v 
+# -- Compiling module BaudTickGen
+# 
+# Top level modules:
+# 	BaudTickGen
+# End time: 14:49:15 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/uart {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_transmitter.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:15 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_transmitter.v 
+# -- Compiling module async_transmitter
+# 
+# Top level modules:
+# 	async_transmitter
+# End time: 14:49:16 on Nov 27,2025, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/uart {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_receiver.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:16 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_receiver.v 
+# -- Compiling module async_receiver
+# 
+# Top level modules:
+# 	async_receiver
+# End time: 14:49:16 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project/uart {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/uart_top.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:16 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/uart_top.v 
+# -- Compiling module uart_top
+# 
+# Top level modules:
+# 	uart_top
+# End time: 14:49:16 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vlog -vlog01compat -work work +incdir+C:/Users/DELL/OneDrive\ -\ ptit.edu.vn/Desktop/SOML_project {C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/tb_soml_decoder.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:49:16 on Nov 27,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project" C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/tb_soml_decoder.v 
+# -- Compiling module tb_soml_decoder
+# 
+# Top level modules:
+# 	tb_soml_decoder
+# End time: 14:49:16 on Nov 27,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L fiftyfivenm_ver -L rtl_work -L work -voptargs="+acc"  tb_soml_decoder
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L fiftyfivenm_ver -L rtl_work -L work -voptargs=""+acc"" tb_soml_decoder 
+# Start time: 14:49:16 on Nov 27,2025
+# Loading work.tb_soml_decoder
+# Loading work.soml_decoder_top
+# Loading work.uart_top
+# Loading work.async_receiver
+# Loading work.BaudTickGen
+# Loading work.async_transmitter
+# Loading work.matrix_multiplier
+# Loading work.delay_module
+# Loading work.cmult
+# Loading work.qmult
+# Loading work.Dh_cal
+# Loading work.fxp_div_pipe
+# Loading work.fxp_zoom
+# Loading work.g_matrix_calculator
+# Loading work.trace_calculator
+# Loading work.c_mac
+# Loading work.MinFinder
+# Loading work.DistanceSquare
+# Loading work.MinSelector
+# Loading work.comparator
+# Loading work.Rq_cal
+# Loading work.dq_cal
+# Loading work.find_min
+# Loading work.determine_tx_signal
+# Loading work.output_signal
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v(100): [PCDPC] - Port size (32) does not match connection size (3) for port 'in'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(7).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/hq_calc_inst/delay_count File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v(100): [PCDPC] - Port size (32) does not match connection size (3) for port 'out'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(9).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/hq_calc_inst/delay_count File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v(107): [PCDPC] - Port size (32) does not match connection size (4) for port 'in'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(7).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/hq_calc_inst/delay_q_count File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v(107): [PCDPC] - Port size (32) does not match connection size (4) for port 'out'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(9).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/hq_calc_inst/delay_q_count File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(805): [PCDPC] - Port size (32) does not match connection size (1) for port 'in'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(7).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/invDh_Valid_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(805): [PCDPC] - Port size (6) does not match connection size (32) for port 'number'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(8).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/invDh_Valid_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(805): [PCDPC] - Port size (32) does not match connection size (1) for port 'out'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(9).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/invDh_Valid_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(891): [PCDPC] - Port size (32) does not match connection size (1) for port 'in'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(7).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/delay_valid_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(891): [PCDPC] - Port size (32) does not match connection size (1) for port 'out'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v(9).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/delay_valid_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_dI1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(9).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_dI2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(10).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_dQ1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(11).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_dQ2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(12).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'min_m_dI1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(17).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'min_m_dI2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(18).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'min_m_dQ1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(19).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(905): [PCDPC] - Port size (32) does not match connection size (3) for port 'min_m_dQ2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v(20).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/find_min_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(921): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Imin_1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v(17).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/determine_tx_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(921): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Qmin_1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v(18).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/determine_tx_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(921): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Imin_2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v(19).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/determine_tx_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(921): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Qmin_2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v(20).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/determine_tx_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(932): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Imin_1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v(16).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/output_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(932): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Qmin_1'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v(17).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/output_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(932): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Imin_2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v(18).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/output_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v
+# ** Warning: (vsim-3015) C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v(932): [PCDPC] - Port size (32) does not match connection size (3) for port 'm_Qmin_2'. The port definition is at: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v(19).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_soml_decoder/uut/output_signal_inst File: C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v
+# 
+# add wave *
+# view structure
+# .main_pane.structure.interior.cs.body.struct
+# view signals
+# .main_pane.objects.interior.cs.body.tree
+# run -all
+# [TB] Dang nap truc tiep H vao uut.h_mem_real...
+# [TB] Dang nap truc tiep Y vao uut.y_mem...
+# [TB] Kich hoat tinh toan (Force Internal Signals)...
+# [TB] Dang cho Output Valid...
+# -------------------------------------------
+# TIME:              1925000
+# RESULT: 0xf00 (Binary: 111100000000)
+# ❌ TEST FAILED! Output mismatch.
+# -------------------------------------------
+# ** Note: $finish    : C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/tb_soml_decoder.v(160)
+#    Time: 2425 ns  Iteration: 0  Instance: /tb_soml_decoder
+# End time: 14:49:24 on Nov 27,2025, Elapsed time: 0:00:08
+# Errors: 0, Warnings: 25

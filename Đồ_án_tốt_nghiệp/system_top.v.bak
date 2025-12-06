@@ -1,0 +1,98 @@
+module system_top (
+    // Clock & Reset
+    input  wire        CLOCK_50,
+    input  wire        sw_0,        // Reset (Active-low: 0=Reset)
+    
+    // UART
+    input  wire        GPIO_RX,
+    output wire        GPIO_TX,     // Echo (tùy chọn)
+
+    // Output kiểm tra (Logic Analyzer / LED)
+    output wire        tx_done_valid, // Báo hiệu tính xong
+    output wire [4:0]  min_index_out, // Kết quả index
+    output wire [11:0] signal_out     // Kết quả data
+);
+
+    // --- 1. Khai báo tín hiệu ---
+    wire rst = !sw_0; // Chuyển sang active-high cho logic bên trong nếu cần
+    
+    // Tín hiệu UART
+    wire       rx_ready;
+    wire [7:0] rx_data;
+    
+    // Tín hiệu kết nối giữa Bridge và Decoder
+    wire        cmd_start;
+    wire        h_val;
+    wire [31:0] h_dat_r, h_dat_i;
+    wire        y_val;
+    wire [31:0] y_dat_r, y_dat_i;
+    
+    // --- 2. Module UART Nhận ---
+    async_receiver #(
+        .ClkFrequency(50000000),
+        .Baud(9600)
+    ) uart_rx (
+        .clk(CLOCK_50),
+        .RxD(GPIO_RX),
+        .RxD_data_ready(rx_ready),
+        .RxD_data(rx_data),
+        .RxD_idle(),
+        .RxD_endofpacket()
+    );
+
+    // (Tùy chọn) Module UART Gửi để Echo lại dữ liệu nhằm kiểm tra đường truyền
+    async_transmitter #(
+        .ClkFrequency(50000000),
+        .Baud(9600)
+    ) uart_tx (
+        .clk(CLOCK_50),
+        .TxD_start(rx_ready),
+        .TxD_data(rx_data),
+        .TxD(GPIO_TX),
+        .TxD_busy()
+    );
+
+    // --- 3. Module Bridge (Xử lý dữ liệu) ---
+    uart_cmd_processor bridge_inst (
+        .clk(CLOCK_50),
+        .rst(rst),
+        .rx_ready(rx_ready),
+        .rx_data(rx_data),
+        
+        .sys_start(cmd_start),
+        .H_valid(h_val), .H_r(h_dat_r), .H_i(h_dat_i),
+        .Y_valid(y_val), .Y_r(y_dat_r), .Y_i(y_dat_i)
+    );
+
+    // --- 4. Module Thuật Toán Chính (SOML Decoder) ---
+    // Gọi module gốc của bạn vào đây. 
+    // Phần RAM bên trong nó sẽ tự hoạt động theo logic của nó.
+    
+    soml_decoder_top #(
+        .Q(22), 
+        .N(32)
+    ) decoder_core (
+        .clk(CLOCK_50),
+        .rst(rst),
+        .start(cmd_start), // Tự động kích hoạt khi nạp byte đầu tiên
+        
+        // Nạp H
+        .H_in_valid(h_val),
+        .H_in_r(h_dat_r),
+        .H_in_i(h_dat_i),
+        
+        // Nạp Y
+        .Y_in_valid(y_val),
+        .Y_in_r(y_dat_r),
+        .Y_in_i(y_dat_i),
+        
+        // Output (Không cần sửa logic bên trong)
+        .s_I_1(), .s_Q_1(), // Các output số phức (để hở nếu không dùng)
+        .s_I_2(), .s_Q_2(),
+        
+        .Smin_index(min_index_out),
+        .output_valid(tx_done_valid),
+        .signal_out_12bit(signal_out)
+    );
+
+endmodule

@@ -1,0 +1,16 @@
+Partition Merge Status : Successful - Fri Dec 05 21:49:42 2025
+Quartus Prime Version : 17.1.0 Build 590 10/25/2017 SJ Lite Edition
+Revision Name : SOML_project
+Top-level Entity Name : system_top
+Family : MAX 10
+Total logic elements : 22,974
+    Total combinational functions : 14,024
+    Dedicated logic registers : 15,110
+Total registers : 15110
+Total pins : 14
+Total virtual pins : 0
+Total memory bits : 27,155
+Embedded Multiplier 9-bit elements : 288
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

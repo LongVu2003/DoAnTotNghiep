@@ -1,0 +1,566 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/simulation/modelsim
+vasync_receiver
+Z1 !s110 1764229756
+!i10b 1
+!s100 f@m<KBReFfIkfeRG2X6NG0
+ITjX?iNKl2]SS=`<iG:T5A1
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1762596468
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_receiver.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_receiver.v
+L0 3
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1764229756.000000
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_receiver.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_receiver.v|
+!i113 1
+Z5 o-vlog01compat -work work
+Z6 !s92 -vlog01compat -work work {+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart}
+Z7 tCvgOpt 0
+vasync_transmitter
+R1
+!i10b 1
+!s100 oR@O9hR0Bn0Tl1`3b?1mV3
+Iba@HH[NEFh[D=h9>h]XdP1
+R2
+R0
+w1762750629
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_transmitter.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_transmitter.v
+L0 13
+R3
+r1
+!s85 0
+31
+Z8 !s108 1764229755.000000
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_transmitter.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/async_transmitter.v|
+!i113 1
+R5
+R6
+R7
+vBaudTickGen
+Z9 !s110 1764229755
+!i10b 1
+!s100 6cO>gd0_Q38l9;>gB[gHl0
+IHmce=5^M`3HQb3^eeVDNM2
+R2
+R0
+w1762596463
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/BaudTickGen.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/BaudTickGen.v
+L0 2
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/BaudTickGen.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/BaudTickGen.v|
+!i113 1
+R5
+R6
+R7
+n@baud@tick@gen
+vc_mac
+R9
+!i10b 1
+!s100 RcbnbP>VQ5>]fKdmFNK><2
+IK8WmFcN5H7P`OY]UEOIhY1
+R2
+R0
+Z10 w1763795665
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/c_mac.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/c_mac.v
+L0 9
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/c_mac.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/c_mac.v|
+!i113 1
+R5
+Z11 !s92 -vlog01compat -work work {+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code}
+R7
+vcmult
+R9
+!i10b 1
+!s100 Tn8VmImV4KjEGIRU;EJ^o1
+I7mQ;ZIO^P_SNXDNO9B@QI1
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/cmult.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/cmult.v
+L0 5
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/cmult.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/cmult.v|
+!i113 1
+R5
+R11
+R7
+vcomparator
+R9
+!i10b 1
+!s100 CLDZQJKF1^obL;3b3BmRm0
+I6>_VXSCIjoh3eI1FKa]5>3
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/comparator.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/comparator.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/comparator.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/comparator.v|
+!i113 1
+R5
+R11
+R7
+vdelay_module
+R9
+!i10b 1
+!s100 GgN5`co6G9ejgVgDOa5eW0
+I[BmL:bEbAX1h1hcoeoDJO0
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/delay_module.v|
+!i113 1
+R5
+R11
+R7
+vdetermine_tx_signal
+R9
+!i10b 1
+!s100 VU_F_LhinTL5>m7VDZ4740
+ISb?JmY]Af_Clf^26<mcR52
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v
+L0 7
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/determine_tx_signal.v|
+!i113 1
+R5
+R11
+R7
+vDh_cal
+R9
+!i10b 1
+!s100 U@lG9fMHOVLlU8U>zm_Kg3
+I4oK6:kPAlToC]93;eoIRa1
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Dh_cal.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Dh_cal.v
+L0 9
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Dh_cal.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Dh_cal.v|
+!i113 1
+R5
+R11
+R7
+n@dh_cal
+vDistanceSquare
+R9
+!i10b 1
+!s100 9?27AYLo9Vje0Y6hoD^AA1
+Iaf^@BRTN77U^O]oPM1jEG2
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/DistanceSquare.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/DistanceSquare.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/DistanceSquare.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/DistanceSquare.v|
+!i113 1
+R5
+R11
+R7
+n@distance@square
+vdq_cal
+R9
+!i10b 1
+!s100 6>ole[TG<gDoHKZKe=ONT0
+IB5KKj0ebL2b>6X0ll628X0
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/dq_cal.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/dq_cal.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/dq_cal.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/dq_cal.v|
+!i113 1
+R5
+R11
+R7
+vfind_min
+R9
+!i10b 1
+!s100 jimdDNEcGW[YAolBbJQdn1
+ILAgE9LlNih?3T;m<jbRSA3
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/find_min.v|
+!i113 1
+R5
+R11
+R7
+vfxp_div_pipe
+R9
+!i10b 1
+!s100 @;YT15z1OEA<loX3N?lIb3
+IU>18@`U4eaTBD3];OiZIl3
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_div_pipe.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_div_pipe.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_div_pipe.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_div_pipe.v|
+!i113 1
+R5
+R11
+R7
+vfxp_zoom
+R9
+!i10b 1
+!s100 ZV=V_l9LTRgS?=:9GgLi^2
+IikdI;`zgVDSb<z>g7n@l`0
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_zoom.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_zoom.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_zoom.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/fxp_zoom.v|
+!i113 1
+R5
+R11
+R7
+vg_matrix_calculator
+R9
+!i10b 1
+!s100 nC=]J@?2Bk`6_;X8hSoN<0
+IB3OjE=j`FPLdB>A<g[hf42
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/g_matrix_caculator.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/g_matrix_caculator.v
+L0 6
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/g_matrix_caculator.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/g_matrix_caculator.v|
+!i113 1
+R5
+R11
+R7
+vmatrix_multiplier
+R9
+!i10b 1
+!s100 1eUJR^3e[=g5lCgd;`GeU0
+I_X64eafW^bm<JN:U<L_4;1
+R2
+R0
+w1764228400
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v
+L0 2
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/matrix_multiplier.v|
+!i113 1
+R5
+R11
+R7
+vMinFinder
+R9
+!i10b 1
+!s100 cj5EBM_CSz7;lc:gY?]?E3
+I@1TM^VUdJjZ0koU4omCk01
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinFinder.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinFinder.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinFinder.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinFinder.v|
+!i113 1
+R5
+R11
+R7
+n@min@finder
+vMinSelector
+R9
+!i10b 1
+!s100 dd=K_k8EcQCGWWh_?21aK1
+I9gKSYQg2`LIZTlj?L^TH<3
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinSelector.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinSelector.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinSelector.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/MinSelector.v|
+!i113 1
+R5
+R11
+R7
+n@min@selector
+voutput_signal
+R9
+!i10b 1
+!s100 8keDd_1G6LXb[SFe>ahaF0
+IlDjcoIGoG``;b=J@7V3W62
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v
+L0 7
+R3
+r1
+!s85 0
+31
+Z12 !s108 1764229754.000000
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/output_signal.v|
+!i113 1
+R5
+R11
+R7
+vqmult
+Z13 !s110 1764229754
+!i10b 1
+!s100 Z>1MSA3_>5mQKOW:_jz;]3
+IOd6imHd=<c]JM9SMVGjc91
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/qmult.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/qmult.v
+L0 44
+R3
+r1
+!s85 0
+31
+R12
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/qmult.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/qmult.v|
+!i113 1
+R5
+R11
+R7
+vRq_cal
+R13
+!i10b 1
+!s100 <Cl[l]LNLfTZ>]OZ93CkK3
+I0]mHzOSH7a2OXIB7e?nYR1
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Rq_cal.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Rq_cal.v
+L0 1
+R3
+r1
+!s85 0
+31
+R12
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Rq_cal.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/Rq_cal.v|
+!i113 1
+R5
+R11
+R7
+n@rq_cal
+vsoml_decoder_top
+R13
+!i10b 1
+!s100 SMooe1IPnQhWfIAW:AGLm0
+I;<[e^=TlIkVEV7lR?6fY:2
+R2
+R0
+w1764150587
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v
+L0 623
+R3
+r1
+!s85 0
+31
+R12
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/soml_decoder_top.v|
+!i113 1
+R5
+R11
+R7
+vtb_soml_decoder
+R1
+!i10b 1
+!s100 l`gTb`fJU>=o;Ad4o0d@J0
+I@XT]BOH_z]7h<7ooPBf:b3
+R2
+R0
+w1764229178
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/tb_soml_decoder.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/tb_soml_decoder.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/tb_soml_decoder.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/tb_soml_decoder.v|
+!i113 1
+R5
+!s92 -vlog01compat -work work {+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project}
+R7
+vtrace_calculator
+R13
+!i10b 1
+!s100 HN:_8N5<Lf74QV^gV;1`i3
+I`iz3Qk^=E@[HH8T`;fZe>1
+R2
+R0
+R10
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/trace_caculator.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/trace_caculator.v
+L0 6
+R3
+r1
+!s85 0
+31
+R12
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/trace_caculator.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/code/trace_caculator.v|
+!i113 1
+R5
+R11
+R7
+vuart_top
+R1
+!i10b 1
+!s100 gWeTR2]Vh[RP[NQnnb:>B1
+IKQ^mLI9P;N1zb0dBJN]N>0
+R2
+R0
+w1764141758
+8C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/uart_top.v
+FC:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/uart_top.v
+L0 423
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/uart_top.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart|C:/Users/DELL/OneDrive - ptit.edu.vn/Desktop/SOML_project/uart/uart_top.v|
+!i113 1
+R5
+R6
+R7

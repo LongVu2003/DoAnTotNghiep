@@ -1,0 +1,98 @@
+module uart_cmd_processor #(
+    parameter N = 32
+) (
+    input  wire        clk,
+    input  wire        rst,
+    
+    // Từ UART
+    input  wire        rx_ready,     // Có 1 byte mới
+    input  wire [7:0]  rx_data,      // Dữ liệu byte
+
+    // Đến SOML Decoder
+    output reg         sys_start,    // Lệnh start cho decoder
+    output reg         H_valid,
+    output reg [N-1:0] H_r,
+    output reg [N-1:0] H_i,
+    output reg         Y_valid,
+    output reg [N-1:0] Y_r,
+    output reg [N-1:0] Y_i
+);
+
+    // Bộ đếm byte (0 -> 7) cho 1 cặp số phức (4 byte thực + 4 byte ảo)
+    reg [2:0] byte_cnt;
+    
+    // Bộ đếm số lượng phần tử (0 -> 15 là H, 16 -> 23 là Y)
+    reg [4:0] element_cnt; 
+    
+    // Thanh ghi tạm
+    reg [N-1:0] tmp_r;
+    reg [N-1:0] tmp_i;
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            byte_cnt    <= 0;
+            element_cnt <= 0;
+            H_valid     <= 0;
+            Y_valid     <= 0;
+            H_r <= 0; H_i <= 0;
+            Y_r <= 0; Y_i <= 0;
+            sys_start   <= 0;
+            tmp_r <= 0; tmp_i <= 0;
+        end else begin
+            // Reset tín hiệu valid (chỉ xung 1 chu kỳ)
+            H_valid <= 0;
+            Y_valid <= 0;
+            
+            // Logic tạo xung start tự động khi bắt đầu nạp
+            // Hoặc bạn có thể nối sys_start với nút nhấn ngoài
+            if (rx_ready && element_cnt == 0 && byte_cnt == 0) begin
+                sys_start <= 1;
+            end else begin
+                sys_start <= 0;
+            end
+
+            if (rx_ready) begin
+                // FSM nhận byte
+                case (byte_cnt)
+                    // --- Nhận phần THỰC (4 byte) ---
+                    0: tmp_r[31:24] <= rx_data;
+                    1: tmp_r[23:16] <= rx_data;
+                    2: tmp_r[15:8]  <= rx_data;
+                    3: tmp_r[7:0]   <= rx_data;
+                    
+                    // --- Nhận phần ẢO (4 byte) ---
+                    4: tmp_i[31:24] <= rx_data;
+                    5: tmp_i[23:16] <= rx_data;
+                    6: tmp_i[15:8]  <= rx_data;
+                    7: begin
+                        tmp_i[7:0] <= rx_data;
+                        
+                        // Đã đủ 1 cặp số phức, quyết định gửi vào H hay Y
+                        if (element_cnt < 16) begin
+                            // Đang nạp Ma trận H (4x4 = 16 phần tử)
+                            H_r <= tmp_r;
+                            H_i <= {tmp_i[31:8], rx_data}; // Gán trực tiếp byte cuối để tiết kiệm 1 clk
+                            H_valid <= 1;
+                        end else if (element_cnt < 24) begin
+                            // Đang nạp Vector Y (4x2 = 8 phần tử)
+                            Y_r <= tmp_r;
+                            Y_i <= {tmp_i[31:8], rx_data};
+                            Y_valid <= 1;
+                        end
+                        
+                        // Tăng bộ đếm phần tử
+                        // Reset nếu đã nhận đủ (16 H + 8 Y = 24) -> Quay vòng để nhận gói mới
+                        if (element_cnt == 23) 
+                            element_cnt <= 0;
+                        else 
+                            element_cnt <= element_cnt + 1;
+                    end
+                endcase
+
+                // Tăng bộ đếm byte
+                byte_cnt <= byte_cnt + 1; // Tự động tràn từ 7 về 0
+            end
+        end
+    end
+
+endmodule

@@ -1,0 +1,18 @@
+
+State Machine - |system_top|soml_decoder_top:decoder_inst|state
+Name state.S_LOAD 
+state.S_IDLE 0 
+state.S_LOAD 1 
+
+State Machine - |system_top|uart_top:uart_inst|state
+Name state.S_WAIT_12BIT state.S_SEND_12BIT state.S_PRE_12BIT state.S_STREAM state.S_WAIT_TX state.S_SEND_H state.S_SEND_H_PRE state.S_RECV_Y state.S_RECV_H state.S_IDLE 
+state.S_IDLE 0 0 0 0 0 0 0 0 0 0 
+state.S_RECV_H 0 0 0 0 0 0 0 0 1 1 
+state.S_RECV_Y 0 0 0 0 0 0 0 1 0 1 
+state.S_SEND_H_PRE 0 0 0 0 0 0 1 0 0 1 
+state.S_SEND_H 0 0 0 0 0 1 0 0 0 1 
+state.S_WAIT_TX 0 0 0 0 1 0 0 0 0 1 
+state.S_STREAM 0 0 0 1 0 0 0 0 0 1 
+state.S_PRE_12BIT 0 0 1 0 0 0 0 0 0 1 
+state.S_SEND_12BIT 0 1 0 0 0 0 0 0 0 1 
+state.S_WAIT_12BIT 1 0 0 0 0 0 0 0 0 1 
