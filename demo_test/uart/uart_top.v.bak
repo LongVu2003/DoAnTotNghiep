@@ -1,0 +1,197 @@
+module uart_top (
+    // 1. Cổng hệ thống
+    input  wire        CLOCK_50,   // Clock 50MHz
+    input  wire        sw_0,       // Reset (Active-low)
+
+    // 2. Cổng UART
+    input  wire        GPIO_RX,    // Nối với TX của ESP32
+    output wire        GPIO_TX,    // Nối với RX của ESP32 (Echo)
+
+    // 3. Cổng Output Data (MỚI)
+    output reg [31:0]  o_data_32bit, // Dữ liệu 32-bit hoàn chỉnh
+    output reg         o_valid       // Lên 1 khi o_data_32bit sẵn sàng
+);
+
+    // =================================================================
+    // 1. ĐỊNH NGHĨA THAM SỐ
+    // =================================================================
+
+    localparam CLK_FREQ = 50000000;
+    localparam BAUD_RATE = 9600;
+
+    wire        rx_data_ready;
+    wire [7:0]  rx_data;
+    wire        tx_busy;
+    wire        reset_n = sw_0;
+
+    // =================================================================
+    // 2. CÁC MODULE UART
+    // =================================================================
+
+    async_receiver #(
+        .ClkFrequency(CLK_FREQ),
+        .Baud(BAUD_RATE)
+    ) rx_inst (
+        .clk(CLOCK_50),
+        .RxD(GPIO_RX),
+        .RxD_data_ready(rx_data_ready),
+        .RxD_data(rx_data),
+        .RxD_idle(),
+        .RxD_endofpacket()
+    );
+
+    async_transmitter #(
+        .ClkFrequency(CLK_FREQ),
+        .Baud(BAUD_RATE)
+    ) tx_inst (
+        .clk(CLOCK_50),
+        .TxD_start(rx_data_ready),  // ECHO lại để kiểm tra (nếu cần)
+        .TxD_data(rx_data),
+        .TxD(GPIO_TX),
+        .TxD_busy(tx_busy)
+    );
+
+    // =================================================================
+    // 3. FSM GỘP 32-BIT VÀ OUTPUT
+    // =================================================================
+
+    localparam STATE_IDLE   = 2'b00;
+    localparam STATE_RECV_H = 2'b01;
+    localparam STATE_RECV_Y = 2'b10;
+    
+    reg [1:0] current_state = STATE_IDLE;
+    reg [2:0] byte_cnt = 0;
+    
+    // Các biến tạm để ghép byte
+    reg [31:0] tmp_data_re;
+    reg [31:0] tmp_data_im;
+
+    // Vẫn giữ mảng để logic đếm hàng/cột hoạt động đúng luồng
+    reg [31:0] matrix_H_re [0:3][0:3];
+    reg [31:0] matrix_H_im [0:3][0:3];
+    reg [31:0] matrix_Y_re [0:3][0:1];
+    reg [31:0] matrix_Y_im [0:3][0:1];
+    
+    reg [1:0] row_h = 0, col_h = 0;
+    reg [1:0] row_y = 0;
+    reg       col_y = 0;
+    
+    always @(posedge CLOCK_50) begin
+        // Mặc định valid mức 0
+        o_valid <= 1'b0; 
+
+        if (!reset_n) begin
+            current_state <= STATE_IDLE;
+            byte_cnt <= 0;
+            row_h <= 0; col_h <= 0;
+            row_y <= 0; col_y <= 0;
+            o_data_32bit <= 0;
+            
+        end else if (rx_data_ready) begin
+        
+            case (current_state)
+                
+                STATE_IDLE: begin
+                    current_state <= STATE_RECV_H;
+                    byte_cnt <= 1;
+                    row_h <= 0; col_h <= 0;
+                    row_y <= 0; col_y <= 0;
+                    // Byte đầu tiên của số thực đầu tiên
+                    tmp_data_re <= {24'h000000, rx_data};
+                end
+                
+                STATE_RECV_H: begin
+                    // --- Xử lý PHẦN THỰC (Bytes 0,1,2,3) ---
+                    if (byte_cnt < 4) begin
+                        tmp_data_re <= {tmp_data_re[23:0], rx_data};
+                        
+                        // Khi nhận đủ byte thứ 4 (byte cuối của phần thực)
+                        if (byte_cnt == 3) begin
+                            // 1. Lưu vào ma trận (giữ logic cũ)
+                            matrix_H_re[row_h][col_h] <= {tmp_data_re[23:0], rx_data};
+                            
+                            // 2. OUTPUT ra ngoài
+                            o_data_32bit <= {tmp_data_re[23:0], rx_data};
+                            o_valid <= 1'b1; // Báo hiệu có data mới
+                        end
+                    end 
+                    // --- Xử lý PHẦN ẢO (Bytes 4,5,6,7) ---
+                    else if (byte_cnt == 4) begin
+                        tmp_data_im <= {24'h000000, rx_data};
+                    end
+                    else begin
+                        tmp_data_im <= {tmp_data_im[23:0], rx_data};
+                        
+                        // Khi nhận đủ byte thứ 8 (byte cuối của phần ảo)
+                        if (byte_cnt == 7) begin
+                            // 1. Lưu vào ma trận
+                            matrix_H_im[row_h][col_h] <= {tmp_data_im[23:0], rx_data};
+
+                            // 2. OUTPUT ra ngoài
+                            o_data_32bit <= {tmp_data_im[23:0], rx_data};
+                            o_valid <= 1'b1; // Báo hiệu có data mới
+                            
+                            // Logic chuyển ô ma trận (Next cell logic)
+                            if (col_h == 3) begin
+                                col_h <= 0;
+                                row_h <= row_h + 1;
+                                if (row_h == 3) begin
+                                    current_state <= STATE_RECV_Y;
+                                end
+                            end else begin
+                                col_h <= col_h + 1;
+                            end
+                        end
+                    end
+                    
+                    // Tăng biến đếm byte
+                    if (byte_cnt == 7) byte_cnt <= 0;
+                    else byte_cnt <= byte_cnt + 1;
+                end
+
+                STATE_RECV_Y: begin
+                    // Tương tự như State H, chỉ khác logic chuyển ô
+                    if (byte_cnt < 4) begin
+                        tmp_data_re <= {tmp_data_re[23:0], rx_data};
+                        if (byte_cnt == 3) begin
+                            matrix_Y_re[row_y][col_y] <= {tmp_data_re[23:0], rx_data};
+                            
+                            // OUTPUT
+                            o_data_32bit <= {tmp_data_re[23:0], rx_data};
+                            o_valid <= 1'b1;
+                        end
+                    end 
+                    else if (byte_cnt == 4) begin
+                        tmp_data_im <= {24'h000000, rx_data};
+                    end
+                    else begin
+                        tmp_data_im <= {tmp_data_im[23:0], rx_data};
+                        if (byte_cnt == 7) begin
+                            matrix_Y_im[row_y][col_y] <= {tmp_data_im[23:0], rx_data};
+                            
+                            // OUTPUT
+                            o_data_32bit <= {tmp_data_im[23:0], rx_data};
+                            o_valid <= 1'b1;
+                            
+                            // Logic chuyển ô
+                            if (col_y == 1) begin
+                                col_y <= 0;
+                                row_y <= row_y + 1;
+                                if (row_y == 3) begin
+                                    current_state <= STATE_IDLE; // Xong hết thì về IDLE
+                                end
+                            end else begin
+                                col_y <= col_y + 1;
+                            end
+                        end
+                    end
+                    
+                    if (byte_cnt == 7) byte_cnt <= 0;
+                    else byte_cnt <= byte_cnt + 1;
+                end
+                
+            endcase
+        end
+    end
+
+endmodule
