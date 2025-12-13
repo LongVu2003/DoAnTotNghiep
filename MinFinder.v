@@ -45,6 +45,8 @@ module MinFinder #(
             dQ2[v_idx] <= dist_Q2;
         end
     end
+
+    
     
     DistanceSquare #(.N(N),.Q(Q)) calc_dI1 (.v_m(v_m_in), .in_ref(xI1), .out_dist(dist_I1));
     DistanceSquare #(.N(N),.Q(Q)) calc_dQ1 (.v_m(v_m_in), .in_ref(xQ1), .out_dist(dist_Q1));
@@ -53,10 +55,10 @@ module MinFinder #(
 
 
     // Module tìm min cho từng loại khoảng cách
-    MinSelector #(.N(N),.Q(Q)) min_selector_I1 (.d0(dI1[0]), .d1(dI1[1]), .d2(dI1[2]), .d3(dI1[3]), .min_dist(min_dI1), .min_idx(min_idx_dI1));
-    MinSelector #(.N(N),.Q(Q)) min_selector_Q1 (.d0(dQ1[0]), .d1(dQ1[1]), .d2(dQ1[2]), .d3(dQ1[3]), .min_dist(min_dQ1), .min_idx(min_idx_dQ1));
-    MinSelector #(.N(N),.Q(Q)) min_selector_I2 (.d0(dI2[0]), .d1(dI2[1]), .d2(dI2[2]), .d3(dI2[3]), .min_dist(min_dI2), .min_idx(min_idx_dI2));
-    MinSelector #(.N(N),.Q(Q)) min_selector_Q2 (.d0(dQ2[0]), .d1(dQ2[1]), .d2(dQ2[2]), .d3(dQ2[3]), .min_dist(min_dQ2), .min_idx(min_idx_dQ2));
+    MinSelector #(.N(N),.Q(Q)) min_selector_I1 (.clk(clk), .rst(rst), .d0(dI1[0]), .d1(dI1[1]), .d2(dI1[2]), .d3(dI1[3]), .min_dist(min_dI1), .min_idx(min_idx_dI1));
+    MinSelector #(.N(N),.Q(Q)) min_selector_Q1 (.clk(clk), .rst(rst), .d0(dQ1[0]), .d1(dQ1[1]), .d2(dQ1[2]), .d3(dQ1[3]), .min_dist(min_dQ1), .min_idx(min_idx_dQ1));
+    MinSelector #(.N(N),.Q(Q)) min_selector_I2 (.clk(clk), .rst(rst), .d0(dI2[0]), .d1(dI2[1]), .d2(dI2[2]), .d3(dI2[3]), .min_dist(min_dI2), .min_idx(min_idx_dI2));
+    MinSelector #(.N(N),.Q(Q)) min_selector_Q2 (.clk(clk), .rst(rst), .d0(dQ2[0]), .d1(dQ2[1]), .d2(dQ2[2]), .d3(dQ2[3]), .min_dist(min_dQ2), .min_idx(min_idx_dQ2));
     
     // RQcal (Không thay đổi)
     Rq_cal #(.N(N),.Q(Q)) Rqcaculate(

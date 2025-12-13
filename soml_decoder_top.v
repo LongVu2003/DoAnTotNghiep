@@ -276,28 +276,28 @@ delay_module #(.N(N)) delay_ga1(
     .clk(clk),
     .rst(rst),
     .in(ga1_r),
-    .number(6'd22), 
+    .number(6'd21), 
     .out(ga1_r_delay)
 );
 delay_module #(.N(N)) delay_ga2(
     .clk(clk),
     .rst(rst),
     .in(ga2_r),
-    .number(6'd22), 
+    .number(6'd21), 
     .out(ga2_r_delay)
 );
 delay_module #(.N(N)) delay_gb1(
     .clk(clk),
     .rst(rst),
     .in(gb1_i),
-    .number(6'd22), 
+    .number(6'd21), 
     .out(gb1_i_delay)
 );
 delay_module #(.N(N)) delay_gb2(
     .clk(clk),
     .rst(rst),
     .in(gb2_i),
-    .number(6'd22), 
+    .number(6'd21), 
     .out(gb2_i_delay)
 );
 
@@ -357,8 +357,17 @@ delay_module #(.N(N)) delay_dh(
     .clk(clk),
     .rst(rst),
     .in(Dh_out),
-    .number(6'd33), 
+    .number(6'd37), 
     .out(Dh_delay)
+);
+
+wire signed [N-1:0] Rq_delay;
+delay_module #(.N(N)) delay_Rq(
+    .clk(clk),
+    .rst(rst),
+    .in(Rq),
+    .number(6'd2), 
+    .out(Rq_delay)
 );
 
 wire signed [N-1:0] dq_out;
@@ -374,7 +383,7 @@ dq_cal #(.N(N),.Q(Q)) dq_calculate (
 	.clk(clk),
 	.rst(rst),
 	.dI1(dI1),.dI2(dI2),.dQ1(dQ1),.dQ2(dQ2),
-	.Rq(Rq),
+	.Rq(Rq_delay),
 	.Dh(Dh_delay),
 	.dq_out(dq_out)
 );
@@ -389,6 +398,15 @@ wire  [2:0] min_dq_m_dQ2;
 
 wire [4:0] q_min;
 
+wire signed dq_valid_delay;
+delay_module #(.N(N)) delay_dq(
+    .clk(clk),
+    .rst(rst),
+    .in(dq_valid),
+    .number(6'd1), 
+    .out(dq_valid_delay)
+);
+
 find_min #(
     .N(32),
     .NUM_VALUES(16)
@@ -397,7 +415,7 @@ find_min_inst (
     .clk(clk),
     .rst_n(!rst),
     .dq_out(dq_out),
-    .in_valid(dq_valid),
+    .in_valid(dq_valid_delay),
     .m_dI1(m_dI1),
     .m_dI2(m_dI2),
     .m_dQ1(m_dQ1),
