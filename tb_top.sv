@@ -7,8 +7,8 @@ module tb_top;
 
     parameter ROWS = 4;
     parameter COLS = 4;
-    parameter CLK_PERIOD = 10;
-    parameter ITER_NO   = 1000;
+    parameter CLK_PERIOD = 2;
+    parameter ITER_NO   = 50;
 
     // --- ĐỊNH NGHĨA TÊN FILE ---
     // Lưu ý: Đảm bảo đường dẫn file tx_bits chính xác
@@ -21,6 +21,10 @@ module tb_top;
     // --- KÍCH THƯỚC MA TRẬN ---
     parameter H_MATRIX_SIZE = 16; // 4x4
     parameter Y_MATRIX_SIZE = 8;  // 4x2
+
+    real sim_start_time;
+    real sim_end_time;
+    real sim_elapsed_time_sec;
 
     reg clk;
     reg rst;
@@ -65,16 +69,19 @@ module tb_top;
     always #(CLK_PERIOD/2) clk = ~clk;
     
 initial begin
-    $dumpfile("tb.vcd");
-    $dumpvars();
+    //$dumpfile("tb.vcd");
+    //$dumpvars();
     initialize_signals();
     reset_dut();
+
+    sim_start_time = $realtime;
     
     // Reset bộ đếm lỗi
     total_bits_sent  = 0;
     total_bit_errors = 0;
 
     // --- CHẠY CÁC TEST CASE ---
+    $display("Starting Testcases...\n");
     for (integer i = 0; i < ITER_NO; i = i + 1) begin
        testcase(i+1, i+1, i); 
     end
@@ -94,7 +101,12 @@ initial begin
         $display("STATUS: PASSED (PERFECT MATCH)");
     else
         $display("STATUS: COMPLETED WITH ERRORS");
-        
+
+    sim_end_time = $realtime;
+    sim_elapsed_time_sec = (sim_end_time - sim_start_time) * 1e-9;
+
+    $display("##################################################\n");
+    $display("Total Simulation Time : %0.6f seconds", sim_elapsed_time_sec);
     $display("##################################################\n");
 
     #100;  
@@ -111,8 +123,8 @@ task testcase(
     input integer bit_file_index // Index dòng trong file text (bắt đầu từ 0)
 );
 begin
-    $display("=======================================");
-    $display("=== TESTCASE (H%0d, Y%0d) @ %0t ===", h_index, y_index, $time);
+    //$display("=======================================");
+    //$display("=== TESTCASE (H%0d, Y%0d) @ %0t ===", h_index, y_index, $time);
 
     // 2. Đọc ma trận H từ file vào RAM
     read_h_matrix_from_file(h_index);
@@ -190,10 +202,10 @@ begin
     total_bit_errors = total_bit_errors + current_errors;
 
     // In thông tin kiểm tra
-    $display("   --> CHECK BER: Exp=%12b | Got=%12b | Errs=%0d", expected_bits, signal_out_12bit, current_errors);
+    //$display("   --> CHECK BER: Exp=%12b | Got=%12b | Errs=%0d", expected_bits, signal_out_12bit, current_errors);
     
-    if (current_errors > 0)
-        $display("   --> MISMATCH DETECTED!");
+    //if (current_errors > 0)
+    //    $display("   --> MISMATCH DETECTED!");
 end
 endtask
 
