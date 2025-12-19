@@ -26,13 +26,20 @@ module matrix_multiplier #(
     output  signed [N-1:0] Hq_out_r, Hq_out_i
     
 );
-    assign Hq_out_r = Hq_r;
-    assign Hq_out_i = Hq_i;
+
+    localparam P_HALF = 32'h00200000;
+    localparam N_HALF = 32'hffe00000;
+    localparam ZERO   = 32'h00000000;
+
 
     localparam COUNT_WIDTH = $clog2(NUM_CHUNKS); 
     reg [COUNT_WIDTH - 1 : 0] count;
     reg [3:0] q_counter_reg;
     reg cal_en;
+
+    wire [COUNT_WIDTH - 1 : 0] count_delay;
+    wire [3:0] q_count_delay;
+    wire calc_en_delay;
 
 
 
@@ -79,34 +86,27 @@ module matrix_multiplier #(
             Hq_valid <= calc_en_delay;
         end
     end
-    wire [COUNT_WIDTH - 1 : 0] count_delay;
-    wire [3:0] q_count_delay;
-    wire calc_en_delay;
-    delay_module #(.N(1)) delay_calc_en(
+    
+    delay_module #(.N(1), .NUM_DELAY(5)) delay_calc_en(
         .clk(clk),
         .rst(rst),
         .in(cal_en),
-        .number(6'd3), 
         .out(calc_en_delay)
     );
-    delay_module #(.N(N)) delay_count(
+    delay_module #(.N(COUNT_WIDTH), .NUM_DELAY(6)) delay_count(
         .clk(clk),
         .rst(rst),
         .in(count),
-        .number(6'd4), 
         .out(count_delay)
     );
-    delay_module #(.N(N)) delay_q_count(
+    delay_module #(.N(4), .NUM_DELAY(6)) delay_q_count(
         .clk(clk),
         .rst(rst),
         .in(q_counter_reg),
-        .number(6'd4), 
         .out(q_count_delay)
     );
 
-    localparam P_HALF = 32'h00200000;
-    localparam N_HALF = 32'hffe00000;
-    localparam ZERO   = 32'h00000000;
+    
     
     reg [0 : (NUM_CHUNKS * CHUNK_WIDTH) - 1] S_ROM_R_k0 [0:15];
     reg [0 : (NUM_CHUNKS * CHUNK_WIDTH) - 1] S_ROM_I_k0 [0:15];
@@ -477,6 +477,9 @@ module matrix_multiplier #(
     wire signed [N-1:0] Hq_r, Hq_i;
     assign Hq_r = pr0 + pr1 + pr2 + pr3;
     assign Hq_i = pi0 + pi1 + pi2 + pi3;
+
+    assign Hq_out_r = Hq_r;
+    assign Hq_out_i = Hq_i;
 
 endmodule
 

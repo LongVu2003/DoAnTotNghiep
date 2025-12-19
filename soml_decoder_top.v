@@ -27,14 +27,13 @@ module soml_decoder_top #(
     output wire              output_valid,
     output wire signed [11:0] signal_out_12bit
 );
+// Wires for determine_tx_signal outputs
+wire signed [N-1:0] s_hat_I_1_out, s_hat_Q_1_out;
+wire signed [N-1:0] s_hat_I_2_out, s_hat_Q_2_out;
+wire [4:0]         S_hat_index_out;
+wire               tx_signal_out_valid;
 
-assign s_I_1 = s_hat_I_1_out;
-assign s_Q_1 = s_hat_Q_1_out;
-assign s_I_2 = s_hat_I_2_out;
-assign s_Q_2 = s_hat_Q_2_out;
-assign Smin_index = S_hat_index_out;
-assign output_valid = tx_signal_out_valid;
-assign signal_out_12bit = {b2_out,b1_out};
+
 //----------------------------------------------------------------
 // 1. FSM State Definitions
 //----------------------------------------------------------------
@@ -138,11 +137,10 @@ wire [N-1:0]  inversDh;
 
 wire invDh_valid;
 
-delay_module #(.N(N)) invDh_Valid_inst(
+delay_module #(.N(1), .NUM_DELAY(35)) invDh_Valid_inst(
     .clk(clk),
     .rst(rst),
     .in(Dh_result_valid),
-    .number(N+1), 
     .out(invDh_valid)
 );		
 fxp_div_pipe #( 
@@ -272,32 +270,28 @@ trace_calculator #(
 );
 
 wire signed [N-1:0] ga1_r_delay, ga2_r_delay,gb1_i_delay,gb2_i_delay;
-delay_module #(.N(N)) delay_ga1(
+delay_module #(.N(N), .NUM_DELAY(23)) delay_ga1(
     .clk(clk),
     .rst(rst),
     .in(ga1_r),
-    .number(6'd21), 
     .out(ga1_r_delay)
 );
-delay_module #(.N(N)) delay_ga2(
+delay_module #(.N(N), .NUM_DELAY(23)) delay_ga2(
     .clk(clk),
     .rst(rst),
     .in(ga2_r),
-    .number(6'd21), 
     .out(ga2_r_delay)
 );
-delay_module #(.N(N)) delay_gb1(
+delay_module #(.N(N), .NUM_DELAY(23)) delay_gb1(
     .clk(clk),
     .rst(rst),
     .in(gb1_i),
-    .number(6'd21), 
     .out(gb1_i_delay)
 );
-delay_module #(.N(N)) delay_gb2(
+delay_module #(.N(N), .NUM_DELAY(23)) delay_gb2(
     .clk(clk),
     .rst(rst),
     .in(gb2_i),
-    .number(6'd21), 
     .out(gb2_i_delay)
 );
 
@@ -344,8 +338,8 @@ wire signed [N-1:0] Rq;
 wire signed [2:0] m_dI1, m_dI2, m_dQ1, m_dQ2;
 
 MinFinder #(.N(N),.Q(Q)) dmin_inst(
-    .clk(clk),
-    .rst_n(!rst),
+    //.clk(clk),
+    //.rst(rst),
 	.xI1(xI1_out), .xQ1(xQ1_out), .xI2(xI2_out), .xQ2(xQ2_out),
 	.min_dI1(dI1), .min_dQ1(dQ1), .min_dI2(dI2), .min_dQ2(dQ2),
 	.Rq(Rq),
@@ -353,37 +347,27 @@ MinFinder #(.N(N),.Q(Q)) dmin_inst(
 );
 
 wire signed [N-1:0] Dh_delay;
-delay_module #(.N(N)) delay_dh(
+delay_module #(.N(N), .NUM_DELAY(35)) delay_dh(
     .clk(clk),
     .rst(rst),
     .in(Dh_out),
-    .number(6'd37), 
     .out(Dh_delay)
 );
 
-wire signed [N-1:0] Rq_delay;
-delay_module #(.N(N)) delay_Rq(
-    .clk(clk),
-    .rst(rst),
-    .in(Rq),
-    .number(6'd2), 
-    .out(Rq_delay)
-);
 
 wire signed [N-1:0] dq_out;
 wire dq_valid;
-delay_module #(.N(N)) delay_valid(
+delay_module #(.N(1), .NUM_DELAY(3)) delay_valid(
     .clk(clk),
     .rst(rst),
     .in(invDh_valid),
-    .number(6'd2), 
     .out(dq_valid)
 );
 dq_cal #(.N(N),.Q(Q)) dq_calculate (
 	.clk(clk),
 	.rst(rst),
 	.dI1(dI1),.dI2(dI2),.dQ1(dQ1),.dQ2(dQ2),
-	.Rq(Rq_delay),
+	.Rq(Rq),
 	.Dh(Dh_delay),
 	.dq_out(dq_out)
 );
@@ -398,15 +382,6 @@ wire  [2:0] min_dq_m_dQ2;
 
 wire [4:0] q_min;
 
-wire signed dq_valid_delay;
-delay_module #(.N(N)) delay_dq(
-    .clk(clk),
-    .rst(rst),
-    .in(dq_valid),
-    .number(6'd1), 
-    .out(dq_valid_delay)
-);
-
 find_min #(
     .N(32),
     .NUM_VALUES(16)
@@ -415,7 +390,7 @@ find_min_inst (
     .clk(clk),
     .rst_n(!rst),
     .dq_out(dq_out),
-    .in_valid(dq_valid_delay),
+    .in_valid(dq_valid),
     .m_dI1(m_dI1),
     .m_dI2(m_dI2),
     .m_dQ1(m_dQ1),
@@ -429,11 +404,7 @@ find_min_inst (
     .min_m_dQ2(min_dq_m_dQ2),
     .q_min(q_min)
 );
-// Wires for determine_tx_signal outputs
-wire signed [N-1:0] s_hat_I_1_out, s_hat_Q_1_out;
-wire signed [N-1:0] s_hat_I_2_out, s_hat_Q_2_out;
-wire [4:0]         S_hat_index_out;
-wire               tx_signal_out_valid;
+
 determine_tx_signal #(
     .N(N), 
     .Q(Q)
@@ -473,6 +444,14 @@ output_signal_inst (
     .b2(b2_out),
     .out_valid(final_out_valid)
 );
+
+assign s_I_1 = s_hat_I_1_out;
+assign s_Q_1 = s_hat_Q_1_out;
+assign s_I_2 = s_hat_I_2_out;
+assign s_Q_2 = s_hat_Q_2_out;
+assign Smin_index = S_hat_index_out;
+assign output_valid = tx_signal_out_valid;
+assign signal_out_12bit = {b2_out,b1_out};
 
 wire load_H_done = (load_row_cnt == 2'b11 && load_col_cnt == 2'b11);
 wire load_Y_done = y_count == 3'b111;
