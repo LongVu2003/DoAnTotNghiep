@@ -115,6 +115,13 @@ module tb_top;
         $finish;
     end
 
+    //time-out
+    initial begin
+        #500000;
+        $display("TIMEOUT Reached. Ending Simulation.");
+        $finish;
+    end
+
     // ============================================================
     // TASK: RUN TESTCASE (Tối ưu hóa)
     // ============================================================

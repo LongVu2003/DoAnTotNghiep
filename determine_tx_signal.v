@@ -1,23 +1,16 @@
-/**
- * @brief Module to map the minimum indices to the transmitted signal values.
- * @details Implements the v(m_min) and S(q_min) mapping based on the provided formulas.
- * The outputs are registered and valid for one clock cycle after the input is valid.
- * Assumes a fixed-point Q8.8 format for the output signals.
- */
+
 module determine_tx_signal #(
-    parameter N = 32, // Total bit-width for fixed-point numbers
-    parameter Q = 22   // Number of fractional bits
+    parameter N = 32,
+    parameter Q = 22  
 ) (
     // System Signals
     input wire              clk,
-    input wire              rst_n,
-
-    // Input Signals (from find_min module)
+    input wire              rst,
     input wire              in_valid,
-    input wire signed [N-1:0] m_Imin_1,
-    input wire signed [N-1:0] m_Qmin_1,
-    input wire signed [N-1:0] m_Imin_2,
-    input wire signed [N-1:0] m_Qmin_2,
+    input wire [2:0] m_Imin_1,
+    input wire [2:0] m_Qmin_1,
+    input wire [2:0] m_Imin_2,
+    input wire [2:0] m_Qmin_2,
     input wire [4:0]        q_min,
 
     // Output Transmitted Signals
@@ -26,6 +19,7 @@ module determine_tx_signal #(
     output reg signed [N-1:0] s_hat_I_2,   // Real part of symbol 2
     output reg signed [N-1:0] s_hat_Q_2,   // Imaginary part of symbol 2
     output reg [4:0]        S_hat_index, // Index q_min representing the matrix S_qmin
+    output wire signed [11:0] signal_out_12bit,
     output reg              out_valid
 );
 
@@ -57,8 +51,8 @@ module determine_tx_signal #(
     assign s_hat_Q_2_comb = v_map(m_Qmin_2);
     
     // --- Registered Output Logic ---
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
             s_hat_I_1   <= 0;
             s_hat_Q_1   <= 0;
             s_hat_I_2   <= 0;
@@ -78,5 +72,28 @@ module determine_tx_signal #(
             end
         end
     end
+
+
+    wire [7:0]         b1_out;
+    wire [3:0]         b2_out;
+    wire               final_out_valid;
+    output_signal #(
+        .N(32)
+    )
+    output_signal_inst (
+        .clk(clk),
+        .rst(rst),
+        .in_valid(in_valid),
+        .m_Imin_1(m_Imin_1),
+        .m_Qmin_1(m_Qmin_1),
+        .m_Imin_2(m_Imin_2),
+        .m_Qmin_2(m_Qmin_2),
+        .q_min(q_min),
+        .b1(b1_out),
+        .b2(b2_out),
+        .out_valid(final_out_valid)
+    );
+
+    assign signal_out_12bit = {b2_out, b1_out};
 
 endmodule

@@ -1,23 +1,18 @@
-/**
- * @brief Module to map the results from the find_min module to output bitstreams b1 and b2.
- * @details Implements the Bv and Bs mapping functions based on the provided formulas.
- * The outputs are registered and valid for one clock cycle after the input is valid.
- * Written in pure Verilog-2001 for maximum compatibility.
- */
+
 module output_signal #(
     parameter N = 32
 ) (
     // System Signals
     input wire                  clk,
-    input wire                  rst_n,
+    input wire                  rst,
 
     // Input Signals (from find_min module)
     input wire                  in_valid,      // Connect to min_valid
-    input wire signed [N-1:0]   m_Imin_1,      // Index for Bv (1-4)
-    input wire signed [N-1:0]   m_Qmin_1,      // Index for Bv (1-4)
-    input wire signed [N-1:0]   m_Imin_2,      // Index for Bv (1-4)
-    input wire signed [N-1:0]   m_Qmin_2,      // Index for Bv (1-4)
-    input wire [4:0]            q_min,         // Connect to q_min
+    input wire [2:0]   m_Imin_1,      // Index for Bv (1-4)
+    input wire [2:0]   m_Qmin_1,      // Index for Bv (1-4)
+    input wire [2:0]   m_Imin_2,      // Index for Bv (1-4)
+    input wire [2:0]   m_Qmin_2,      // Index for Bv (1-4)
+    input wire [4:0]   q_min,         // Connect to q_min
 
     // Output Bitstreams
     output reg [7:0]            b1,
@@ -35,7 +30,8 @@ module output_signal #(
                 2:       Bv_map = 2'b01; // Bv(2) -> 01
                 3:       Bv_map = 2'b11; // Bv(3) -> 11
                 4:       Bv_map = 2'b10; // Bv(4) -> 10
-                default: Bv_map = 2'b00; // Default case for safety
+                default: 
+                     Bv_map = 2'b00; // Default case for safety
             endcase
         end
     endfunction
@@ -53,8 +49,8 @@ module output_signal #(
 
     // --- Registered Output Logic ---
     // This creates a pipeline stage, making timing easier to manage.
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
             b1        <= 8'b0;
             b2        <= 4'b0;
             out_valid <= 1'b0;
